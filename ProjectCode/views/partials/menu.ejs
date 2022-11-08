@@ -1,28 +1,24 @@
 <header>
-    <nav class="navbar navbar-expand-sm border-bottom">
-      <div class="container">
-        <button
-          class="navbar-toggler ms-auto"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbar-collapse"
-          aria-controls="navbar"
-          aria-expanded="false"
-          aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbar-collapse">
-          <ul class="navbar-nav me-auto">
-            <li class="nav-item">
-                <a class="nav-link" href="/discover">Discover</a>
-              <!-- TO-DO: For Discover, add a <a> tag with an attribute href to call the '/discover' API -->
-            </li>
-          </ul>
-          <div class="nav-item me-1">
-              <a class="nav-link" href="/logout">Logout</a>
-            <!-- TO-DO: For Logout, add a <a> tag with an attribute href to call the '/logout API -->
-          </div>
-        </div>
-      </div>
-    </nav>
-   </header>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">Mixify</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="/home">Home </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/mixify">Mix</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/prospects">Prospects</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/logout">Logout</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
