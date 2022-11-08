@@ -60,9 +60,17 @@ app.get('/mixify', function(req, res) {
 
 app.get('/prospects', function(req, res) {
     res.render("pages/prospects");
-})
+});
+
+app.get('/login', function(req, res) {
+    res.render("pages/login");
+});
+
+app.get('/register', function(req, res) {
+    res.render("pages/register");
+});
 
 app.get('/logout', function(req, res) {
     res.render("pages/logout");
-})
+});
     
