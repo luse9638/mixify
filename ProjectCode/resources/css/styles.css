@@ -3,6 +3,10 @@ ul {
     display: flex;
     gap: 32px;
 }
+h1 {
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 1000px;
+}
 
 #navbar {
     width: 100vw;
