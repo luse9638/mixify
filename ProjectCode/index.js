@@ -62,9 +62,10 @@ app.get('/prospects', function(req, res) {
     res.render("pages/prospects");
 });
 
-app.get('/login', function(req, res) {
-    res.render("pages/login");
-});
+// removed this because there's a /login with spotify
+// app.get('/login', function(req, res) {
+//     res.render("pages/login");
+// });
 
 app.get('/register', function(req, res) {
     res.render("pages/register");
@@ -94,6 +95,26 @@ app.post("/login", (req, res) => {
       res.redirect("/login");
     });
 });
+
+
+app.get("/login", function (req, res) {
+  var state = generateRandomString(16);
+  res.cookie(stateKey, state);
+
+  // your application requests authorization
+  var scope = "user-read-private user-read-email user-top-read";
+  res.redirect(
+    "https://accounts.spotify.com/authorize?" +
+      querystring.stringify({
+        response_type: "code",
+        client_id: client_id,
+        scope: scope,
+        redirect_uri: redirect_uri,
+        state: state,
+      })
+  );
+});
+
 
 
 
