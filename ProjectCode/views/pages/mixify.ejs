@@ -1,15 +1,55 @@
 <%- include ('../partials/header') %>
-<link rel="stylesheet" href="../../resources/css/mixify.css">
-</head>
-<body>
-    
+<style>
+
+
+.profile {
+    width: 50px;
+    height: 50px;
+    margin-right: 32px;
+}
+
+#mainContent {
+    margin-top: 42px;
+    display: flex;
+    gap: 16px 0px;
+    flex-direction: column;
+    align-items: center;
+}
+
+#current {
+    padding: 20px 0px;
+    border-radius: 12px;
+    margin-top: 32px;
+    background: #b7d8b0;
+    width: 50%;
+    display: flex;
+    gap: 16px 0px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#currentHeader {
+    color: white;
+}
+
+.friends {
+    display: flex;
+    margin-bottom: 16px;
+}
+
+.btn {
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.2);
+}
+
+</style>
 <%- include ('../partials/menu') %>
     
 <main>
     <div id="mainContent">
         <h1>Add Some Friends!</h1>
-        <input type="text">
-        <button>Add</button>
+        <input type="text" id="inputBox">
+        <button class="btn btn-success">Add</button>
         <div id="current">
             <h1 id="currentHeader">Current Friends</h1>
             <div class="friends">
@@ -18,7 +58,7 @@
                 <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="profile picture" class="profile">
                 <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="profile picture" class="profile">
             </div>
-            <button>Mix!</button>
+            <button class="btn btn-light">Mix!</button>
         </div>
     </div>
 </main>
