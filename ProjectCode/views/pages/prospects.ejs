@@ -1,0 +1,35 @@
+<%- include ('../partials/header') %>
+<%- include ('../partials/menu') %>
+
+<main>
+    <h1 style="text-align:center" class="text-success">Add Friends</h1>
+    <!-- 2 columns for current friends and prospective friends -->
+    <div class="row justify-content-center">
+        <div class="row">
+          <div class="col-sm">
+            <h3 style="text-align:center" class="text-success">Current Friends</h3>
+            <!-- Table to display current friends -->
+            <table class="table table-responsive">
+                <tr>
+                    <th class="text-center">Name</th>
+                    <th class="text-center">Profile Pic</th>
+                    <th class="text-center">Remove Friend Button</th>
+                    <!-- TODO: grab list of all current friends once database is working -->
+                </tr>
+            </table>
+          </div>
+          <div class="col-sm">
+            <h3 style="text-align:center" class="text-success">Prospective Friends</h3>
+            <!-- Table to display prospective friends -->
+            <table class="table table-responsive">
+                <tr>
+                    <th class="text-center">Name</th>
+                    <th class="text-center">Profile Pic</th>
+                    <th class="text-center">Add Friend Button</th>
+                    <!-- TODO: grab list of all registered users once database is working -->
+                </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+</main>
