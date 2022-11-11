@@ -4,6 +4,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { response } = require('express');
 const pgp = require('pg-promise')();
+const querystring = require('querystring');
 
 // defining the Express app
 const app = express();
@@ -41,9 +42,6 @@ const db = pgp(dbConfig);
       console.log('ERROR:', error.message || error);
     });
 
-app.listen(3000, () => {
-    console.log('listening on port 3000');
-});
     //   require('dotenv').config();
 
 app.get('/', function (req, res) {
@@ -73,4 +71,31 @@ app.get('/register', function(req, res) {
 app.get('/logout', function(req, res) {
     res.render("pages/logout");
 });
-    
+
+
+console.log("index.js is linked");
+
+
+var client_id = '8ed5339bc3e6483f8ab02a378e93a136';
+var redirect_uri = 'http://localhost:3000/home';
+
+app.get('/loginSpotify', function(req, res) {
+
+  // var state = generateRandomString(16);
+  var scope = 'user-read-private user-read-email';
+
+  res.redirect('https://accounts.spotify.com/authorize?' +
+    querystring.stringify({
+      response_type: 'code',
+      client_id: client_id,
+      scope: scope,
+      redirect_uri: redirect_uri,
+      state: "asfklaslkjhsak"
+    }));
+});
+
+  
+app.listen(3000, () => {
+  console.log('listening on port 3000');
+});
+
