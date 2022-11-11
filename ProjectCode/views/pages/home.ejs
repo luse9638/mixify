@@ -1,13 +1,107 @@
 <%- include ('../partials/header') %>
 <%- include ('../partials/menu') %>
+<style>
+
+body {
+    height: 100%;
+    background: linear-gradient(#7dda96,#498b5b);
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-position: center;
+}
+
+h1 {
+    text-align: center;
+    margin-top: 24px;
+    margin-bottom: 56px;
+    font-size: 64px;
+    color: white;
+    text-shadow: 0px 0px 12px rgba(5, 52, 20, 0.621);
+}
+
+.container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+#introduction {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+#introText {
+    width: 500px;
+    min-width: 400px;
+    display: inline-block;
+    font-size: 26px;
+    text-align: center;
+    color: white;
+    /*text-shadow: 0px 0px 2px rgba(17, 17, 17,0.2);*/
+}
+
+#party {
+    object-fit: cover;
+    width: 600px;
+    min-width: 600px;
+    height: 350px;
+    border-radius: 4px;
+    box-shadow: 0px 0px 4px rgba(26, 26, 26, 0.621);
+}
+
+hr.rounded {
+    margin: 64px 0px;
+    width: 70%;
+    border-top: 8px solid white;
+    border-radius: 20px;
+}
+
+.card {
+    margin: 0 48px;
+    width: 500px;
+    box-shadow: 0px 2px 12px rgba(26, 26, 26, 0.5);
+    margin-bottom: 72px;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 370px;
+    object-fit: cover;
+}
+
+</style>
 
 <main>
-  <div class="col"><%- include ('../partials/message') %></div>
+  <h1>Welcome to Mixify</h1>
   <div class="container">
-     <p>homepage after login</p>
+      <div id="introduction">
+        <h2 id="introText">Mixify brings you and your friends together through music. Add up to 10 of your friends at once to see
+            which songs all of you listen to! Whether you all have a similar favorite, a similar embarrassing song,
+            or all of you just love the spongebob theme, mixify makes music with friends fun.
+        </h2>
+        <img src="../../resources/img/party.jpg" alt="photograph of people partying at a concert" id="party">
+      </div>
   </div>
-
-
+  <div class="container">
+      <hr class="rounded">
+  </div>
+  <div class="container">
+      <div class="card text-white bg-success">
+        <img class="card-img-top" src="../../resources/img/mix.png" alt="A screenshot of the mixify page">
+        <div class="card-body">
+            <h5 class="card-title">Mixify Page</h5>
+            <p class="card-text">The Mixify page is where you can add friends to a mix and see which songs all of you have in common.</p>
+        </div>
+      </div>
+      <div class="card text-white bg-success">
+        <img class="card-img-top" src="../../resources/img/prospects.png" alt="A screenshot of the prospects page">
+        <div class="card-body">
+            <h5 class="card-title">Prospects Page</h5>
+            <p class="card-text">The Prospects page shows you a list of your current friends, and other users that you can add. Once you're friends with someone, you can start mixing with them.</p>
+        </div>
+      </div>
+  </div>
 </main>
 
 <%- include ('../partials/footer') %>
