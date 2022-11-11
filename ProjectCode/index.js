@@ -13,6 +13,8 @@ const app = express();
 app.set("view engine", "ejs");
 // using bodyParser to parse JSON in the request body into JS objects
 app.use(bodyParser.json());
+app.use(express.static(__dirname + '/'));
+
 
 app.use(
   bodyParser.urlencoded({
