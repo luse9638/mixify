@@ -1,26 +1,50 @@
 <%- include ('../partials/header') %>
+<link rel="stylesheet" href="../../resources/css/stylesForRegister.css">
 <%- include ('../partials/menu') %>
+<style>
+  h1 {
+    color: #000000;
+    margin: auto;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 65px;
+    margin-top: 15%;
+  }
 
+  #mainbutton {
+    margin-top: 40px;
+    width: 500px;
+    height: 65px;
+    color: #1DB954;
+    background-color: black;
+    font-size: 30px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    
+  }
+
+  #greenhalf {
+    margin-top:60px;
+    height: 400px;
+    width: 100%;
+    background-color: #1DB954;
+  }
+  </style>
 <main>
-  <div class="col"><%- include ('../partials/message') %></div>
-  <div class="container">
+  <body>
+  <div class="content"><%- include ('../partials/message') %></div>
+  <div class = "container"
       <form action="/register" method="POST">
-        <h1>Register</h1>
-        <div class = "form-group">
-            <label for="InputEmail">Username</label>
-            <input name="username" type="email" class="form-control" id="InputEmail" placeholder="Username">
-        </div>
-        <div class= "form-group">
-            <label for="InputPassword">Password</label>
-            <input name="password" type="password" class="form-control" id="InputPassword" placeholder="Password">
-        </div>
-        <button type="submit" class="btn btn-primary">Register</button>
+        <h1><center>Create your Mixify Account</center></h1> 
+        <center><button id="mainbutton">Link with Spotify</button></center>
+        <!-- <center><button type="submit" class="btn btn-primary">Link with Spotify</button></center> -->
       </form>
 
       <button><a href="/loginSpotify">login to spotify</a></button>
 
       <p>Already have an account?<a href="/login">Login</a></p>
   </div>
+  <div id="greenhalf"></div>
+</body>
 
   <script></script>
 </main>
