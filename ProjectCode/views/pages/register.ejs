@@ -28,6 +28,27 @@
     width: 100%;
     background-color: #1DB954;
   }
+
+  a {
+    color: #1DB954;
+  }
+
+  a:link {
+  text-decoration: none;
+}
+
+a:visited {
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  color: white;
+}
+
+a:active {
+  text-decoration: underline;
+}
   </style>
 <main>
   <body>
@@ -35,13 +56,13 @@
   <div class = "container"
       <form action="/register" method="POST">
         <h1><center>Create your Mixify Account</center></h1> 
-        <center><button id="mainbutton">Link with Spotify</button></center>
+        <center><button id="mainbutton"><a href="/loginSpotify">Link with Spotify</a></button></center>
         <!-- <center><button type="submit" class="btn btn-primary">Link with Spotify</button></center> -->
       </form>
 
-      <button><a href="/loginSpotify">login to spotify</a></button>
+      <!-- <button><a href="/loginSpotify">login to spotify</a></button> -->
 
-      <p>Already have an account?<a href="/login">Login</a></p>
+      <!-- <p>Already have an account?<a href="/login">Login</a></p> -->
   </div>
   <div id="greenhalf"></div>
 </body>
