@@ -72,10 +72,9 @@ app.get('/logout', function(req, res) {
     res.render("pages/logout");
 });
 
-
-console.log("index.js is linked");
-
-
+//spotify auth, currently linked to a button in register.ejs
+//state var should probably be a randomly generated string of length 16
+//required querystring to make it work
 var client_id = '8ed5339bc3e6483f8ab02a378e93a136';
 var redirect_uri = 'http://localhost:3000/home';
 
