@@ -97,18 +97,15 @@ app.get('/loginSpotify', function(req, res) {
 
 
 
-// CHANGES: created a post login to submit information like username
-// will probably need to replace with the spotify API but for now
-app.post("/login", (req, res) => {
-  const username = req.body.username;
-  const query = "select * from users where users.username = $1";
-
+// create a post to request data from the database on the songs 
+app.post("/songs", (req, res) => {
+  // const username = NEED TO FILL THIS IN with the spotify login API result 
+  const query = "select * from users where users.username = $1"; 
+  // CHANGE THE QUERY to select all the songs from the user to show that? 
   db.one(query, values)
     .then((data) => {
-      user.username = username;
-      req.session.user = user;
-      req.session.save();
 
+      req.session.save();
       res.redirect("/");
     })
     .catch((err) => {
@@ -118,28 +115,10 @@ app.post("/login", (req, res) => {
 });
 
 
-app.get("/login", function (req, res) {
-  var state = generateRandomString(16);
-  res.cookie(stateKey, state);
-
-  // your application requests authorization
-  var scope = "user-read-private user-read-email user-top-read";
-  res.redirect(
-    "https://accounts.spotify.com/authorize?" +
-      querystring.stringify({
-        response_type: "code",
-        client_id: client_id,
-        scope: scope,
-        redirect_uri: redirect_uri,
-        state: state,
-      })
-  );
-});
-
-
-
-
-// not tested yet but this should add to the friends table with the friend requested 
+// this was originally implemented to add to the friends table with the friend requested on the page
+// need to ensure that the user that is selected on the website is passed in appropriately - that user needs to be displayed based on the databse
+// TO DO 1. make the prospects page display friends correctly based on the database 
+// 2. here from the displaying friends correctly select friends and update the database adequately - refer to lab 9
 const all_friends = `
   SELECT friends.friend_username
   WHERE friends.username = $1
