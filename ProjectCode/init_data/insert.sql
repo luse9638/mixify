@@ -1,6 +1,6 @@
-INSERT INTO users(username, password) VALUES
-('lillian', 'duarte'),
-('luke', 'sellmeyer');
+INSERT INTO users(username) VALUES
+('lillian'),
+('luke');
 
 INSERT INTO friends(username, friend_username) VALUES
 ('lillian', 'luke'),

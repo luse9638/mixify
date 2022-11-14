@@ -57,7 +57,24 @@ app.get('/mixify', function(req, res) {
 });
 
 app.get('/prospects', function(req, res) {
-    res.render("pages/prospects");
+  const query = 'select * from users;';
+
+  db.any(query)
+  .then((users) => 
+  {
+    res.render("pages/prospects", {
+      users,
+      // action: req.query.taken ? "delete" : "add",
+      // need to update the action to add and remove friends (based on lab 8)
+    });
+  })
+  .catch((err) => {
+    res.render('pages/prospects', {
+      users: [],
+      error: true,
+      message: err.message,
+    });
+  });
 });
 
 app.get('/login', function(req, res) {
@@ -187,6 +204,24 @@ app.get('/callback', function(req, res) {
           spotifyUserDisplayName = body.display_name;
           console.log("User id: " + spotifyUserID + " Display name: " + spotifyUserDisplayName);
         });
+
+
+        // add username to database 
+        db.tx(async(t) => {
+          const username = await t.none (`INSERT INTO users (username) values ($1)`, 
+          [body.id]
+        );
+        })
+        .then((data) => {
+            res.render("pages/courses", {});
+            // need to pass this information back, left off here 
+        })
+        .catch((err) => {
+          console.log(err);
+          res.redirect("/home");
+        })
+
+
         // once we've gotten these we send the user to the homepage
         res.redirect('/home');
       // if we don't get a 200 status code, something's gone wrong
@@ -228,6 +263,9 @@ const all_friends = `
   WHERE friends.username = $1
   FROM friends;
   `;
+
+
+
 
 app.post("/prospects/add", (req, res) => {
   const username = req.body.username;
