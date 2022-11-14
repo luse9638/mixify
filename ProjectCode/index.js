@@ -47,7 +47,7 @@ const db = pgp(dbConfig);
     //   require('dotenv').config();
 
 app.get('/', function (req, res) {
-    res.render("pages/register");
+    res.render("pages/home");
 });
 
 app.get('/home', function(req, res) {
