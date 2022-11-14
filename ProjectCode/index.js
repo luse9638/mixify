@@ -82,7 +82,7 @@ var redirect_uri = 'http://localhost:3000/callback';
 // what we want to access from the user's spotify
 var scope = 'user-read-private user-read-email user-top-read';
 
-// not quite sure what this does tbh
+// not quite sure what this does tbh but its needed
 var stateKey = 'spotify_auth_state';
 
 /**
@@ -109,6 +109,7 @@ var generateRandomString = function(length) {
 // We do this by sending a GET request to spotify's /authorize endpoint by passing the client_id,
 // redirect_uri, and scopes
 // After the user accepts the request, they are taken back to the redirect_uri that was passed
+// This occurs when the "login to spotify" button/link is clicked
 app.get('/loginSpotify', function(req, res) {
 
   var state = generateRandomString(16);
@@ -126,15 +127,19 @@ app.get('/loginSpotify', function(req, res) {
     }));
 });
 
-// Second step: now that the user has authorized the request, we exchange the authorization code
-// for an access token by making a POST request to spotify's /api/token endpoint with the
-// authorization code and redirect_uri
+// Second step: now that the user has authorized the request, we need to get the access token
+// which will actually let us make requests to get the user's information,
+// we do this by making a request to spotify's /api/token endpoint with the
+// authorization code and redirect_uri we got after calling spotify's /authorize endpoint
 // Access token and refresh token will be stored in variables below
+// This is automatically called after /loginSpotify is called through the redirect uri
 var access_token, refresh_token;
+// spotify userID is how we'll store users in the database, display name isn't unique so shouldn't be used in the database
+// but can be used on the ejs pages (e.g. welcome, *displayName*)
+var spotifyUserID, spotifyUserDisplayName;
 app.get('/callback', function(req, res) {
 
-  // your application requests refresh and access tokens
-  // after checking the state parameter
+  // get the state and stored state
   var code = req.query.code || null;
   var state = req.query.state || null;
   var storedState = req.cookies ? req.cookies[stateKey] : null;
@@ -149,6 +154,7 @@ app.get('/callback', function(req, res) {
       }));
   } else {
     res.clearCookie(stateKey);
+    // body of POST request to get access and refresh tokens
     var authOptions = {
       url: 'https://accounts.spotify.com/api/token',
       form: {
@@ -161,14 +167,29 @@ app.get('/callback', function(req, res) {
       },
       json: true
     };
-
+    // actually making the request
     request.post(authOptions, function(error, response, body) {
+      // 200 is a successful status code
       if (!error && response.statusCode === 200) {
         // this actually sets the access and refresh tokens
         access_token = body.access_token,
         refresh_token = body.refresh_token;
+        // body for GET request to user's id and display name
+        var getUserName = {
+          url: 'https://api.spotify.com/v1/me',
+          headers: { 'Authorization': 'Bearer ' + access_token},
+          json: true
+        };
+        // making the GET request
+        request.get(getUserName, function(error, response, body) {
+          // save user id to put in the database later, save display name for homepage(?)
+          spotifyUserID = body.id;
+          spotifyUserDisplayName = body.display_name;
+          console.log("User id: " + spotifyUserID + " Display name: " + spotifyUserDisplayName);
+        });
         // once we've gotten these we send the user to the homepage
         res.redirect('/home');
+      // if we don't get a 200 status code, something's gone wrong
       } else {
         res.redirect('/#' +
           querystring.stringify({
