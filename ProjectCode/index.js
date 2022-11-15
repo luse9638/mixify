@@ -80,20 +80,19 @@ app.get('/mixify', function(req, res) {
 });
 
 app.get('/prospects', function(req, res) {
-  const query = 'select * from users;';
+  const query = 'select displayName from userIDsToDisplayNames;';
 
   db.any(query)
-  .then((users) => 
+  .then((displayNames) => 
   {
+    console.log(displayNames);
     res.render("pages/prospects", {
-      users,
-      // action: req.query.taken ? "delete" : "add",
-      // need to update the action to add and remove friends (based on lab 8)
+      displayNames: displayNames,
     });
   })
   .catch((err) => {
     res.render('pages/prospects', {
-      users: [],
+      displayNames: [],
       error: true,
       message: err.message,
     });
