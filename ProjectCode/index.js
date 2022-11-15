@@ -252,6 +252,7 @@ app.get('/callback', function(req, res) {
                   CREATE TABLE $1(
                    song_name VARCHAR(50) NOT NULL,
         );`, [user.spotifyUserID])
+    // then use a for loop to look through all of their top songs and add it to the newly created database
 
       // if we don't get a 200 status code, something's gone wrong
       } else {
