@@ -25,3 +25,4 @@ CREATE TABLE allUsersAllSongs(
     userID VARCHAR(50),
     songName VARCHAR(50)
 );
+

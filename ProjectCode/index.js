@@ -239,6 +239,20 @@ app.get('/callback', function(req, res) {
             console.log(err);
           });
         });
+
+        // making a request for the songs & adding their songs to a table
+        // documentation for getting their top songs 
+// https://developer.spotify.com/documentation/web-api/reference/#/operations/get-users-top-artists-and-tracks
+// sample request: curl --request GET \
+  // --url https://api.spotify.com/v1/me/top/type \
+  // --header 'Authorization: ' \
+  // --header 'Content-Type: application/json' 
+// part of adding the user songs to a table: 
+        db.multi(`DROP TABLE IF EXISTS $1;
+                  CREATE TABLE $1(
+                   song_name VARCHAR(50) NOT NULL,
+        );`, [user.spotifyUserID])
+
       // if we don't get a 200 status code, something's gone wrong
       } else {
         res.redirect('/#' +
@@ -309,3 +323,4 @@ app.post("/prospects/add", (req, res) => {
 app.listen(3000, () => {
   console.log('listening on port 3000');
 });
+
