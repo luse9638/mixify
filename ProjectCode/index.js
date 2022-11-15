@@ -202,28 +202,18 @@ app.get('/callback', function(req, res) {
           // save user id to put in the database later, save display name for homepage(?)
           spotifyUserID = body.id;
           spotifyUserDisplayName = body.display_name;
-          console.log("User id: " + spotifyUserID + " Display name: " + spotifyUserDisplayName);
+          // console.log("User id: " + spotifyUserID + " Display name: " + spotifyUserDisplayName);
+          // add username to database 
+          db.multi(`insert into userIDs(userID) values ($1);insert into userIDsToDisplayNames (userID, displayName) values ($1, $2);`, [spotifyUserID, spotifyUserDisplayName])
+          .then((data) => {
+            // redirect to home page if this is successful
+            res.redirect('/home');
+          })
+          .catch((err) => {
+            // should probably do something more here if this doesn't work, but that's a problem for testing week
+            console.log(err);
+          });
         });
-
-
-        // add username to database 
-        db.tx(async(t) => {
-          const username = await t.none (`INSERT INTO users (username) values ($1)`, 
-          [body.id]
-        );
-        })
-        .then((data) => {
-            res.render("pages/courses", {});
-            // need to pass this information back, left off here 
-        })
-        .catch((err) => {
-          console.log(err);
-          res.redirect("/home");
-        })
-
-
-        // once we've gotten these we send the user to the homepage
-        res.redirect('/home');
       // if we don't get a 200 status code, something's gone wrong
       } else {
         res.redirect('/#' +

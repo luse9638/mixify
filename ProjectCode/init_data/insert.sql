@@ -1,12 +1,12 @@
-INSERT INTO users(username) VALUES
+INSERT INTO userIDs(userID) VALUES
 ('lillian'),
 ('luke');
 
-INSERT INTO friends(username, friend_username) VALUES
+INSERT INTO friends(userID, friendUserID) VALUES
 ('lillian', 'luke'),
-('luke, lillian');
+('luke', 'lillian');
 
 
-INSERT INTO allUsersAllSongs(username, song_name) VALUES
+INSERT INTO allUsersAllSongs(userID, songName) VALUES
 ('lillian', 'reptilia'),
 ('luke', 'reptilia');
