@@ -72,7 +72,7 @@ app.get('/home', function(req, res) {
   // pass the userID and displayName to be used in the home page  
   res.render("pages/home", {
       userID: user.spotifyUserID,
-      displayName: user.spotifyDisplayName,
+      displayName: user.spotifyDisplayName
     });
 });
 
