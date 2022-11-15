@@ -5,12 +5,23 @@ const bodyParser = require('body-parser');
 const pgp = require('pg-promise')();
 const querystring = require('querystring');
 const request = require('request');
+const session = require('express-session')
 
 // defining the Express app
 const app = express();
 
 // set the view engine to ejs
 app.set("view engine", "ejs");
+
+// set session
+app.use(
+  session({
+    secret: "XASDASDA",
+    saveUninitialized: true,
+    resave: true,
+  })
+);
+
 // using bodyParser to parse JSON in the request body into JS objects
 app.use(bodyParser.json());
 app.use(express.static(__dirname + '/'));
@@ -44,12 +55,24 @@ const db = pgp(dbConfig);
 
     //   require('dotenv').config();
 
+// this saves information about the current user, will be updated later
+const user = {
+  spotifyUserID: undefined,
+  spotifyDisplayName: undefined,
+  spotifyAccessToken: undefined,
+  spotifyRefreshToken: undefined,
+}
+
 app.get('/', function (req, res) {
     res.render("pages/register");
 });
 
 app.get('/home', function(req, res) {
-    res.render("pages/home");
+  // pass the userID and displayName to be used in the home page  
+  res.render("pages/home", {
+      userID: user.spotifyUserID,
+      displayName: user.spotifyDisplayName,
+    });
 });
 
 app.get('/mixify', function(req, res) {
@@ -148,12 +171,10 @@ app.get('/loginSpotify', function(req, res) {
 // which will actually let us make requests to get the user's information,
 // we do this by making a request to spotify's /api/token endpoint with the
 // authorization code and redirect_uri we got after calling spotify's /authorize endpoint
-// Access token and refresh token will be stored in variables below
+// Access token, refresh token, userID, and displayName will be stored in the user object
 // This is automatically called after /loginSpotify is called through the redirect uri
-var access_token, refresh_token;
 // spotify userID is how we'll store users in the database, display name isn't unique so shouldn't be used in the database
 // but can be used on the ejs pages (e.g. welcome, *displayName*)
-var spotifyUserID, spotifyUserDisplayName;
 app.get('/callback', function(req, res) {
 
   // get the state and stored state
@@ -188,23 +209,25 @@ app.get('/callback', function(req, res) {
     request.post(authOptions, function(error, response, body) {
       // 200 is a successful status code
       if (!error && response.statusCode === 200) {
-        // this actually sets the access and refresh tokens
-        access_token = body.access_token,
-        refresh_token = body.refresh_token;
+        // this actually sets the access and refresh tokens for the current user
+        user.spotifyAccessToken = body.access_token,
+        user.spotifyRefreshToken = body.refresh_token;
         // body for GET request to user's id and display name
         var getUserName = {
           url: 'https://api.spotify.com/v1/me',
-          headers: { 'Authorization': 'Bearer ' + access_token},
+          headers: { 'Authorization': 'Bearer ' + user.spotifyAccessToken},
           json: true
         };
         // making the GET request
         request.get(getUserName, function(error, response, body) {
-          // save user id to put in the database later, save display name for homepage(?)
-          spotifyUserID = body.id;
-          spotifyUserDisplayName = body.display_name;
-          // console.log("User id: " + spotifyUserID + " Display name: " + spotifyUserDisplayName);
+          // save user id and display name for database and webpages
+          user.spotifyUserID = body.id;
+          user.spotifyDisplayName = body.display_name;
+          // save the user's session
+          req.session.user = user;
+          req.session.save();
           // add username to database 
-          db.multi(`insert into userIDs(userID) values ($1);insert into userIDsToDisplayNames (userID, displayName) values ($1, $2);`, [spotifyUserID, spotifyUserDisplayName])
+          db.multi(`insert into userIDs(userID) values ($1);insert into userIDsToDisplayNames (userID, displayName) values ($1, $2);`, [user.spotifyUserID, user.spotifyDisplayName])
           .then((data) => {
             // redirect to home page if this is successful
             res.redirect('/home');
