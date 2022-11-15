@@ -61,6 +61,7 @@ const user = {
   spotifyDisplayName: undefined,
   spotifyAccessToken: undefined,
   spotifyRefreshToken: undefined,
+  spotifyProfilePicURL: undefined,
 }
 
 app.get('/', function (req, res) {
@@ -87,7 +88,7 @@ app.get('/prospects', function(req, res) {
   {
     console.log(displayNames);
     res.render("pages/prospects", {
-      displayNames: displayNames,
+      displayNames,
     });
   })
   .catch((err) => {
@@ -222,6 +223,8 @@ app.get('/callback', function(req, res) {
           // save user id and display name for database and webpages
           user.spotifyUserID = body.id;
           user.spotifyDisplayName = body.display_name;
+          user.spotifyProfilePicURL = body.images;
+          console.log(user.spotifyProfilePicURL);
           // save the user's session
           req.session.user = user;
           req.session.save();
