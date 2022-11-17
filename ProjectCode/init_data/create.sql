@@ -20,9 +20,17 @@ CREATE TABLE friends(
     friendUserID VARCHAR(50)
 );
 
--- this table links users to which songs they like
-CREATE TABLE allUsersAllSongs(
-    userID VARCHAR(50),
-    songName VARCHAR(50)
+
+CREATE TABLE lillian_songs(
+    song VARCHAR(100),
+    artist VARCHAR(50)
 );
 
+
+CREATE TABLE justin_songs(
+    song VARCHAR(100),
+    artist VARCHAR(50)
+);
+
+-- Request for EJS to get the songs: 
+-- SELECT lillian_songs.song FROM lillian_songs INNER JOIN justin_songs ON lillian_songs.song = justin_songs.song;

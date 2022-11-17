@@ -12,7 +12,12 @@ INSERT INTO friends(userID, friendUserID) VALUES
 ('lillian', 'luke'),
 ('luke', 'lillian');
 
+INSERT INTO lillian_songs(song, artist) VALUES
+('Butterfly Effect', 'Travvy Scott'),
+('Yosemite', 'Travvy Scott'),
+('You Only Live Once', 'The Strokes');
 
-INSERT INTO allUsersAllSongs(userID, songName) VALUES
-('lillian', 'reptilia'),
-('luke', 'reptilia');
+INSERT INTO justin_songs(song, artist) VALUES
+('Instant Crush', 'Daft Punk'),
+('Butterfly Effect', 'Travvy Scott'),
+('Equinox', 'Hotel Pools');
