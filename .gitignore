@@ -1,5 +1,7 @@
 echo .DS_Store >> .gitignore
 
+.DS_Store
+
 /ProjectCode/node_modules/
 
 # Logs
