@@ -109,6 +109,12 @@ app.get('/register', function(req, res) {
 });
 
 app.get('/logout', function(req, res) {
+    user.spotifyUserID = undefined;
+    user.spotifyDisplayName = undefined;
+    user.spotifyAccessToken = undefined;
+    user.spotifyRefreshToken = undefined;
+    user.spotifyProfilePicURL = undefined;
+    req.session.destroy();
     res.render("pages/logout");
 });
 
