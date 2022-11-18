@@ -4,7 +4,7 @@
 
 -- this is the table of all users, identified by their unique userID, with their display name and profile pic also stored
 CREATE TABLE users(
-    userID VARCHAR(50) PRIMARY KEY,
+    userID VARCHAR(50),
     displayName VARCHAR(50),
     profilePicURL VARCHAR(100)
 );
@@ -15,8 +15,14 @@ CREATE TABLE friends(
     friendUserID VARCHAR(50)
 );
 
--- this table links users to which songs they like
-CREATE TABLE allUsersAllSongs(
-    userID VARCHAR(50),
-    songName VARCHAR(50)
+
+CREATE TABLE lillian_songs(
+    song VARCHAR(100),
+    artist VARCHAR(50)
+);
+
+
+CREATE TABLE justin_songs(
+    song VARCHAR(100),
+    artist VARCHAR(50)
 );
