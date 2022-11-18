@@ -44,12 +44,19 @@
 
 </style>
 <%- include ('../partials/menu') %>
+
+<script defer>
+
+    const mixAdd = document.querySelector("#mixAdd");
+    mixAdd.addEventListener()
+
+</script>
     
 <main>
     <div id="mainContent">
         <h1>Add Some Friends!</h1>
         <input type="text" id="inputBox">
-        <button class="btn btn-success">Add</button>
+        <button class="btn btn-success" id="mixAdd">Add</button>
         <div id="current">
             <h1 id="currentHeader">Current Friends</h1>
             <div class="friends">
@@ -58,7 +65,9 @@
                 <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="profile picture" class="profile">
                 <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="profile picture" class="profile">
             </div>
-            <button class="btn btn-light">Mix!</button>
+            <form action='/mix' method="POST">
+                <button class="btn btn-light" type="submit">Mix!</button>
+            </form>
         </div>
     </div>
 </main>

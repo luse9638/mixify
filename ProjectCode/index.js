@@ -320,6 +320,26 @@ app.post("/prospects/add", (req, res) => {
     });
 });
 
+const mixResults = {};
+
+app.post('/mix', (req, res) => {
+
+    console.log("WORKED")
+    const query = 'SELECT lillian_songs.song FROM lillian_songs INNER JOIN justin_songs ON lillian_songs.song = justin_songs.song;'
+
+    // db.any(query)
+    // .then( () => {
+    //     mixResults = query;
+    //     console.log(mixResults);
+
+    // })
+    // .catch( (err) => {
+    //   console.log(err);
+    // })
+
+
+});
+
   
 app.listen(3000, () => {
   console.log('listening on port 3000');
