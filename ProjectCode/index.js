@@ -81,14 +81,16 @@ app.get('/mixify', function(req, res) {
 });
 
 app.get('/prospects', function(req, res) {
-  const query = 'select displayName from userIDsToDisplayNames;';
-
+  // query from database to get all of the users and their profile pictures
+  const query = `select userID, displayName, profilePicURL from users;`;
   db.any(query)
-  .then((displayNames) => 
+  .then((queryData) => // all this data is stored in queryData
   {
-    console.log(displayNames);
+    console.log(queryData);
+    // send queryData to prospects page so it can be rendered
     res.render("pages/prospects", {
-      displayNames,
+      queryData,
+      currentUserID: user.spotifyUserID,
     });
   })
   .catch((err) => {
@@ -99,6 +101,8 @@ app.get('/prospects', function(req, res) {
     });
   });
 });
+
+
 
 app.get('/login', function(req, res) {
     res.render("pages/login");
@@ -229,13 +233,14 @@ app.get('/callback', function(req, res) {
           // save user id and display name for database and webpages
           user.spotifyUserID = body.id;
           user.spotifyDisplayName = body.display_name;
-          user.spotifyProfilePicURL = body.images;
+          user.spotifyProfilePicURL = body.images[0].url;
           console.log(user.spotifyProfilePicURL);
           // save the user's session
           req.session.user = user;
           req.session.save();
           // add username to database 
-          db.multi(`insert into userIDs(userID) values ($1);insert into userIDsToDisplayNames (userID, displayName) values ($1, $2);`, [user.spotifyUserID, user.spotifyDisplayName])
+          db.multi(`insert into users (userID, displayName, profilePicURL) values ($1, $2, $3);`, 
+          [user.spotifyUserID, user.spotifyDisplayName, user.spotifyProfilePicURL])
           .then((data) => {
             // redirect to home page if this is successful
             res.redirect('/home');
@@ -244,6 +249,7 @@ app.get('/callback', function(req, res) {
             // should probably do something more here if this doesn't work, but that's a problem for testing week
             console.log(err);
           });
+
         });
       // if we don't get a 200 status code, something's gone wrong
       } else {
@@ -279,32 +285,25 @@ app.post("/songs", (req, res) => {
 // need to ensure that the user that is selected on the website is passed in appropriately - that user needs to be displayed based on the databse
 // TO DO 1. make the prospects page display friends correctly based on the database 
 // 2. here from the displaying friends correctly select friends and update the database adequately - refer to lab 9
-const all_friends = `
-  SELECT friends.friend_username
-  WHERE friends.username = $1
-  FROM friends;
-  `;
-
 
 
 
 app.post("/prospects/add", (req, res) => {
-  const username = req.body.username;
+  const friendUserID = req.body.friendUserID;
+  const query = `insert into friends (userID, friendUserID) values ($1, $2);`;
   db.tx(async (t) => {
-    await t.none(
-      "INSERT INTO friends(username, friend_username) VALUES ($1, $2);",
-      [username, req.session.user.friend_username] 
+    await t.multi(
+      query,
+      [user.spotifyUserID, req.body.friendUserID] 
       // not sure how to connect friend_id to ejs page
     );
-    return t.any(all_friends, [req.session.user.username]);
+    //return t.any(all_friends, [req.session.user.username]);
   })
     .then(() => {
-      res.render("pages/prospects", {
-        message: `Successfully added friend ${req.body.friend_username}`,
-      });
+      res.redirect('/prospects');
     })
     .catch((err) => {
-      res.render("pages/prospects", {
+      res.redirect('/prospects', {
         error: true,
         message: err.message,
       });
