@@ -21,16 +21,21 @@
           <div class="col-sm">
             <h3 style="text-align:center" class="text-success">Prospective Friends</h3>
             <!-- Table to display prospective friends -->
+            <!-- TODO: format this so it isn't jank af -->
             <table class="table table-responsive">
                 <tr>
-                    <th class="text-center">Name</th>
+                  <!-- Headers of Table -->  
+                  <th class="text-center">Name</th>
                     <th class="text-center">Profile Pic</th>
                     <th class="text-center">Add Friend Button</th>
-                    <!-- Keep working here -->
-                    <% displayNames.forEach(obj => {%>
+                    <!-- Loop through users table to display names and profile pictures stored in queryData -->
+                    <% queryData.forEach(obj => {%>
                       <tr>
+                        <!-- User's display name -->
                         <td><%= obj.displayname%></td>
-                        <td>Insert Profile Pic Here</td>
+                        <!-- User's profile picture -->
+                        <td><img src=<%= obj.profilepicurl %>></td>
+                        <!-- Button to add friend -->
                         <td>Insert Button Here</td>
                       </tr>
                     <% }) %>

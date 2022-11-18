@@ -81,14 +81,15 @@ app.get('/mixify', function(req, res) {
 });
 
 app.get('/prospects', function(req, res) {
-  const query = 'select displayName from userIDsToDisplayNames;';
-
+  // query from database to get all of the users and their profile pictures
+  const query = `select displayName, profilePicURL from users;`;
   db.any(query)
-  .then((displayNames) => 
+  .then((queryData) => // all this data is stored in queryData
   {
-    console.log(displayNames);
+    console.log(queryData);
+    // send queryData to prospects page so it can be rendered
     res.render("pages/prospects", {
-      displayNames,
+      queryData,
     });
   })
   .catch((err) => {
@@ -223,13 +224,14 @@ app.get('/callback', function(req, res) {
           // save user id and display name for database and webpages
           user.spotifyUserID = body.id;
           user.spotifyDisplayName = body.display_name;
-          user.spotifyProfilePicURL = body.images;
+          user.spotifyProfilePicURL = body.images[0].url;
           console.log(user.spotifyProfilePicURL);
           // save the user's session
           req.session.user = user;
           req.session.save();
           // add username to database 
-          db.multi(`insert into userIDs(userID) values ($1);insert into userIDsToDisplayNames (userID, displayName) values ($1, $2);`, [user.spotifyUserID, user.spotifyDisplayName])
+          db.multi(`insert into users (userID, displayName, profilePicURL) values ($1, $2, $3);`, 
+          [user.spotifyUserID, user.spotifyDisplayName, user.spotifyProfilePicURL])
           .then((data) => {
             // redirect to home page if this is successful
             res.redirect('/home');
@@ -238,6 +240,7 @@ app.get('/callback', function(req, res) {
             // should probably do something more here if this doesn't work, but that's a problem for testing week
             console.log(err);
           });
+
         });
       // if we don't get a 200 status code, something's gone wrong
       } else {
