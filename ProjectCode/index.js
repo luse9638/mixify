@@ -82,7 +82,7 @@ app.get('/mixify', function(req, res) {
 
 app.get('/prospects', function(req, res) {
   // query from database to get all of the users and their profile pictures
-  const query = `select displayName, profilePicURL from users;`;
+  const query = `select userID, displayName, profilePicURL from users;`;
   db.any(query)
   .then((queryData) => // all this data is stored in queryData
   {
@@ -90,6 +90,7 @@ app.get('/prospects', function(req, res) {
     // send queryData to prospects page so it can be rendered
     res.render("pages/prospects", {
       queryData,
+      currentUserID: user.spotifyUserID,
     });
   })
   .catch((err) => {

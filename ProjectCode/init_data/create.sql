@@ -6,7 +6,7 @@
 CREATE TABLE users(
     userID VARCHAR(50) PRIMARY KEY,
     displayName VARCHAR(50),
-    profilePicURL VARCHAR(70)
+    profilePicURL VARCHAR(100)
 );
 
 -- this table links userIDs that are friends

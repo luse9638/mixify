@@ -21,7 +21,6 @@
           <div class="col-sm">
             <h3 style="text-align:center" class="text-success">Prospective Friends</h3>
             <!-- Table to display prospective friends -->
-            <!-- TODO: format this so it isn't jank af -->
             <table class="table table-responsive">
                 <tr>
                   <!-- Headers of Table -->  
@@ -30,14 +29,17 @@
                     <th class="text-center">Add Friend Button</th>
                     <!-- Loop through users table to display names and profile pictures stored in queryData -->
                     <% queryData.forEach(obj => {%>
-                      <tr>
-                        <!-- User's display name -->
-                        <td><%= obj.displayname%></td>
-                        <!-- User's profile picture -->
-                        <td><img src=<%= obj.profilepicurl %>></td>
-                        <!-- Button to add friend -->
-                        <td>Insert Button Here</td>
-                      </tr>
+                      <!-- We don't want to display the current user as a possible friend -->
+                      <% if (obj.userid !== currentUserID) { %>
+                        <tr>
+                          <!-- User's display name -->
+                          <td><%= obj.displayname%></td>
+                          <!-- User's profile picture -->
+                          <td><img src=<%= obj.profilepicurl %> width="100", height="100"></td>
+                          <!-- Button to add friend -->
+                          <td>Insert Button Here</td>
+                        </tr>
+                        <% } %>
                     <% }) %>
                 </tr>
             </table>
