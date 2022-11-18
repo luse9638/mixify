@@ -15,8 +15,14 @@ CREATE TABLE friends(
     friendUserID VARCHAR(50)
 );
 
--- this table links users to which songs they like
-CREATE TABLE allUsersAllSongs(
-    userID VARCHAR(50),
-    songName VARCHAR(50)
+
+CREATE TABLE lillian_songs(
+    song VARCHAR(100),
+    artist VARCHAR(50)
+);
+
+
+CREATE TABLE justin_songs(
+    song VARCHAR(100),
+    artist VARCHAR(50)
 );
