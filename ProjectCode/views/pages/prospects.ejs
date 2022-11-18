@@ -37,7 +37,12 @@
                           <!-- User's profile picture -->
                           <td><img src=<%= obj.profilepicurl %> width="100", height="100"></td>
                           <!-- Button to add friend -->
-                          <td>Insert Button Here</td>
+                          <td>
+                            <form action='/prospects/add' method='POST'> 
+                              <input name='friendUserID' type='hidden' value='<%= obj.userid %>'> </input>
+                              <button type='submit' class='btn btn-primary'>Add</button>
+                            </form>
+                          </td>
                         </tr>
                         <% } %>
                     <% }) %>
