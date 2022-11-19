@@ -93,7 +93,6 @@ app.get('/prospects', function(req, res) {
   db.multi(query, [user.spotifyUserID])
   .then((queryData) => 
   {
-    console.log(queryData);
     // send queryData to prospects page so it can be rendered
     res.render("pages/prospects", {
       queryData,
@@ -110,8 +109,10 @@ app.get('/prospects', function(req, res) {
   });
 });
 
+// this gets called when the add friend button is clicked in prospects.ejs
 app.post("/prospects/add", (req, res) => {
   const friendUserID = req.body.friendUserID;
+  // insert current user's id and friend they want to add into the database
   const query = `insert into friends (userID, friendUserID) values ($1, $2);`;
   db.tx(async (t) => {
     await t.multi(
@@ -120,6 +121,7 @@ app.post("/prospects/add", (req, res) => {
     );
   })
     .then(() => {
+      // calls the /prospects endpoint so everything can be rerendered
       res.redirect('/prospects');
     })
     .catch((err) => {
@@ -130,9 +132,9 @@ app.post("/prospects/add", (req, res) => {
     });
 });
 
+// this gets called when the remove friend button is clicked in prospects.ejs
 app.post("/prospects/remove", (req, res) => {
-  console.log("Got here!");
-  const friendUserID = req.body.friendUserID;
+  // delete current user's specified friend to remove from the database
   const query = `delete from friends where userid=$1 and frienduserid=$2;`
   db.tx(async (t) => {
     await t.multi(
@@ -141,6 +143,7 @@ app.post("/prospects/remove", (req, res) => {
     );
   })
     .then(() => {
+      // call the /prospects endpoint so that everything can be rerendered
       res.redirect('/prospects');
     })
     .catch((err) => {
@@ -151,8 +154,6 @@ app.post("/prospects/remove", (req, res) => {
     });
 
 });
-
-
 
 app.get('/login', function(req, res) {
     res.render("pages/login");
@@ -287,19 +288,48 @@ app.get('/callback', function(req, res) {
           // save the user's session
           req.session.user = user;
           req.session.save();
-          // add username to database 
-          db.multi(`insert into users (userID, displayName, profilePicURL) values ($1, $2, $3);`, 
+          // add username to database if it isn't already in it
+          db.multi(`insert into users (userID, displayName, profilePicURL) values ($1, $2, $3) on conflict do nothing;`, 
           [user.spotifyUserID, user.spotifyDisplayName, user.spotifyProfilePicURL])
           .then((data) => {
-            // redirect to home page if this is successful
-            res.redirect('/home');
+            console.log("Successfully added spotify user to database")
           })
           .catch((err) => {
             // should probably do something more here if this doesn't work, but that's a problem for testing week
+            console.log("An error occurred adding the spotify user to the database:");
             console.log(err);
+            res.redirect('/login');
           });
-
         });
+        // getting the user's top 50 tracks
+        var topTracks = [];
+        var getTopTracks = {
+          // max limit from spotify is 50 tracks, long_term means top songs of all time
+          url: 'https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=long_term',
+          headers: { 'Authorization': 'Bearer ' + user.spotifyAccessToken},
+          json: true 
+        }
+        request.get(getTopTracks, function(error, response, body) {
+          for (var i = 0; i < 50; i++) {
+            // the get top track requests doesn't get all of the information we need about the song, specifically the artist
+            // we instead store the track's unique id to use in a separate get request to spotify that will give more detailed
+            // information about that particular song
+            topTracks.push(body.items[i].id);
+          }
+        });
+        // LEFT OFF HERE: spotify returns 400 status about 'invalid id' when making the get request below
+        for (var i = 0; i < 1; i++) {
+          console.log(String(topTracks[i]));
+          var url = 'https://api.spotify.com/v1/tracks/' + String(topTracks[i]);
+          var getTrackInfo = {
+            url: url,
+            headers: { 'Authorization': 'Bearer ' + user.spotifyAccessToken},
+            json: true 
+          }
+          request.get(getTrackInfo, function(error, response, body) {
+            console.log(body);
+          });
+        }
       // if we don't get a 200 status code, something's gone wrong
       } else {
         res.redirect('/#' +
