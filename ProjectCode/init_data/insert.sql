@@ -5,8 +5,8 @@ INSERT INTO users(userID, displayName, profilePicURL) VALUES
 
 
 INSERT INTO friends(userID, friendUserID) VALUES
-('lillian', 'luke'),
-('luke', 'lillian');
+('j2kv8kg9gf92g21kld992hd', '82jfoei2f093hg934hdf93h'),
+('82jfoei2f093hg934hdf93h', '93hgk2hfiy29thf83hf93jd');
 
 INSERT INTO lillian_songs(song, artist) VALUES
 ('Butterfly Effect', 'Travvy Scott'),
