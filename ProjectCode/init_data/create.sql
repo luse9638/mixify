@@ -4,7 +4,7 @@
 
 -- this is the table of all users, identified by their unique userID, with their display name and profile pic also stored
 CREATE TABLE users(
-    userID VARCHAR(50),
+    userID VARCHAR(50) PRIMARY KEY,
     displayName VARCHAR(50),
     profilePicURL VARCHAR(100)
 );

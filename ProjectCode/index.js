@@ -81,15 +81,23 @@ app.get('/mixify', function(req, res) {
 });
 
 app.get('/prospects', function(req, res) {
-  // query from database to get all of the users and their profile pictures
-  const query = `select userID, displayName, profilePicURL from users;`;
-  db.any(query)
-  .then((queryData) => // all this data is stored in queryData
+  // First query gets information about all users (EXCEPT those that are already added as friends): 
+  // id, display name, and profile pic, which is used for the prospective friends list
+  // this gets stored in queryData[0]
+  // there's probably a more concise way to write this query but for now it works fine
+  
+  // Second query gets information of current user's friends from friends table, which is used in the current friends list
+  // this gets stored in queryData[1]
+  const query = `select * from users where userID in (select userID from users except select friendUserID from friends where friends.userID=$1);
+  select * from users where userID in (select friendUserID from friends where userID = $1);`;
+  db.multi(query, [user.spotifyUserID])
+  .then((queryData) => 
   {
     console.log(queryData);
     // send queryData to prospects page so it can be rendered
     res.render("pages/prospects", {
       queryData,
+      // this is used so that the current user can't be added as a friend (you can't add yourself as a friend, duh!)
       currentUserID: user.spotifyUserID,
     });
   })
@@ -100,6 +108,48 @@ app.get('/prospects', function(req, res) {
       message: err.message,
     });
   });
+});
+
+app.post("/prospects/add", (req, res) => {
+  const friendUserID = req.body.friendUserID;
+  const query = `insert into friends (userID, friendUserID) values ($1, $2);`;
+  db.tx(async (t) => {
+    await t.multi(
+      query,
+      [user.spotifyUserID, req.body.friendUserID] 
+    );
+  })
+    .then(() => {
+      res.redirect('/prospects');
+    })
+    .catch((err) => {
+      res.redirect('/prospects', {
+        error: true,
+        message: err.message,
+      });
+    });
+});
+
+app.post("/prospects/remove", (req, res) => {
+  console.log("Got here!");
+  const friendUserID = req.body.friendUserID;
+  const query = `delete from friends where userid=$1 and frienduserid=$2;`
+  db.tx(async (t) => {
+    await t.multi(
+      query,
+      [user.spotifyUserID, req.body.friendUserID] 
+    );
+  })
+    .then(() => {
+      res.redirect('/prospects');
+    })
+    .catch((err) => {
+      res.redirect('/prospects', {
+        error: true,
+        message: err.message,
+      });
+    });
+
 });
 
 
@@ -125,7 +175,7 @@ app.get('/logout', function(req, res) {
 
 // using luke's spotify developer client_id and client_secret
 var client_id = 'a12be07bf1294c3cb32c3e290e15c117';
-var client_secret = '851d927ede4b4d86a2ba25f1c0d29270'
+var client_secret = '851d927ede4b4d86a2ba25f1c0d29270';
 // redirect uri is where to send user after they've logged in with spotify
 // MAKE SURE THIS IS ADDED IN THE APPROVED REDIRECT URI LIST ON THE SPOTIFY DEVELOPER DASHBOARD
 var redirect_uri = 'http://localhost:3000/callback';
@@ -234,7 +284,6 @@ app.get('/callback', function(req, res) {
           user.spotifyUserID = body.id;
           user.spotifyDisplayName = body.display_name;
           user.spotifyProfilePicURL = body.images[0].url;
-          console.log(user.spotifyProfilePicURL);
           // save the user's session
           req.session.user = user;
           req.session.save();
@@ -288,27 +337,7 @@ app.post("/songs", (req, res) => {
 
 
 
-app.post("/prospects/add", (req, res) => {
-  const friendUserID = req.body.friendUserID;
-  const query = `insert into friends (userID, friendUserID) values ($1, $2);`;
-  db.tx(async (t) => {
-    await t.multi(
-      query,
-      [user.spotifyUserID, req.body.friendUserID] 
-      // not sure how to connect friend_id to ejs page
-    );
-    //return t.any(all_friends, [req.session.user.username]);
-  })
-    .then(() => {
-      res.redirect('/prospects');
-    })
-    .catch((err) => {
-      res.redirect('/prospects', {
-        error: true,
-        message: err.message,
-      });
-    });
-});
+
 
   
 app.listen(3000, () => {
