@@ -86,10 +86,10 @@ app.get('/prospects', function(req, res) {
   // this gets stored in queryData[0]
   // there's probably a more concise way to write this query but for now it works fine
   
-  // Second query gets displaynames of current user's friends from friends table, which is used in the current friends list
+  // Second query gets information of current user's friends from friends table, which is used in the current friends list
   // this gets stored in queryData[1]
   const query = `select * from users where userID in (select userID from users except select friendUserID from friends where friends.userID=$1);
-  select displayName, profilePicURL from users where userID in (select friendUserID from friends where userID = $1);`;
+  select * from users where userID in (select friendUserID from friends where userID = $1);`;
   db.multi(query, [user.spotifyUserID])
   .then((queryData) => 
   {
@@ -108,6 +108,48 @@ app.get('/prospects', function(req, res) {
       message: err.message,
     });
   });
+});
+
+app.post("/prospects/add", (req, res) => {
+  const friendUserID = req.body.friendUserID;
+  const query = `insert into friends (userID, friendUserID) values ($1, $2);`;
+  db.tx(async (t) => {
+    await t.multi(
+      query,
+      [user.spotifyUserID, req.body.friendUserID] 
+    );
+  })
+    .then(() => {
+      res.redirect('/prospects');
+    })
+    .catch((err) => {
+      res.redirect('/prospects', {
+        error: true,
+        message: err.message,
+      });
+    });
+});
+
+app.post("/prospects/remove", (req, res) => {
+  console.log("Got here!");
+  const friendUserID = req.body.friendUserID;
+  const query = `delete from friends where userid=$1 and frienduserid=$2;`
+  db.tx(async (t) => {
+    await t.multi(
+      query,
+      [user.spotifyUserID, req.body.friendUserID] 
+    );
+  })
+    .then(() => {
+      res.redirect('/prospects');
+    })
+    .catch((err) => {
+      res.redirect('/prospects', {
+        error: true,
+        message: err.message,
+      });
+    });
+
 });
 
 
@@ -295,27 +337,7 @@ app.post("/songs", (req, res) => {
 
 
 
-app.post("/prospects/add", (req, res) => {
-  const friendUserID = req.body.friendUserID;
-  const query = `insert into friends (userID, friendUserID) values ($1, $2);`;
-  db.tx(async (t) => {
-    await t.multi(
-      query,
-      [user.spotifyUserID, req.body.friendUserID] 
-      // not sure how to connect friend_id to ejs page
-    );
-    //return t.any(all_friends, [req.session.user.username]);
-  })
-    .then(() => {
-      res.redirect('/prospects');
-    })
-    .catch((err) => {
-      res.redirect('/prospects', {
-        error: true,
-        message: err.message,
-      });
-    });
-});
+
 
   
 app.listen(3000, () => {

@@ -19,7 +19,14 @@
                       <tr>
                         <td><%= obj.displayname%></td>
                         <td><img src=<%= obj.profilepicurl %> width="100", height="100"> </td>
-                        <td> Remove Friend Button Here</td>
+                        <td>
+                          <!-- Clicking button calls the /prospects/remove api -->
+                          <form action='http://localhost:3000/prospects/remove' method='POST'> 
+                            <!-- Pass the current userid to friendUserID in index.js -->
+                            <input name='friendUserID' type='hidden' value='<%= obj.userid %>'> </input>
+                            <button type='submit' class='btn btn-primary'>Remove Friend</button>
+                          </form>
+                        </td>
                       </tr>
                     <% }) %>
                 </tr>
@@ -32,27 +39,29 @@
                 <tr>
                   <!-- Headers of Table -->  
                   <th class="text-center">Name</th>
-                    <th class="text-center">Profile Pic</th>
-                    <th class="text-center">Add Friend Button</th>
-                    <!-- Loop through users table to display names and profile pictures stored in queryData -->
-                    <% queryData[0].forEach(obj => { %>
-                      <!-- We don't want to display the current user as a possible friend -->
-                      <% if (obj.userid !== currentUserID) { %>
-                        <tr>
-                          <!-- User's display name -->
-                          <td><%= obj.displayname%></td>
-                          <!-- User's profile picture -->
-                          <td><img src=<%= obj.profilepicurl %> width="100", height="100"></td>
-                          <!-- Button to add friend -->
-                          <td>
-                            <form action='/prospects/add' method='POST'> 
-                              <input name='friendUserID' type='hidden' value='<%= obj.userid %>'> </input>
-                              <button type='submit' class='btn btn-primary'>Add</button>
-                            </form>
-                          </td>
-                        </tr>
-                        <% } %>
-                    <% }) %>
+                  <th class="text-center">Profile Pic</th>
+                  <th class="text-center">Add Friend Button</th>
+                  <!-- Loop through users table to display names and profile pictures stored in queryData -->
+                  <% queryData[0].forEach(obj => { %>
+                    <!-- We don't want to display the current user as a possible friend -->
+                    <% if (obj.userid !== currentUserID) { %>
+                      <tr>
+                        <!-- User's display name -->
+                        <td><%= obj.displayname%></td>
+                        <!-- User's profile picture -->
+                        <td><img src=<%= obj.profilepicurl %> width="100", height="100"></td>
+                        <!-- Button to add friend -->
+                        <td>
+                          <!-- Clicking button calls the /prospects/add api -->
+                          <form action='http://localhost:3000/prospects/add' method='POST'> 
+                            <!-- Pass the current userid to friendUserID in index.js -->
+                            <input name='friendUserID' type='hidden' value='<%= obj.userid %>'> </input>
+                            <button type='submit' class='btn btn-primary'>Add</button>
+                          </form>
+                        </td>
+                      </tr>
+                      <% } %>
+                  <% }) %>
                 </tr>
             </table>
           </div>
