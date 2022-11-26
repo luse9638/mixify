@@ -78,7 +78,24 @@ app.get('/home', function(req, res) {
 });
 
 app.get('/mixify', function(req, res) {
-    res.render("pages/mixify");
+  const query = `select * from users where userID in (select friendUserID from friends where userID = $1);`;
+  db.multi(query, [user.spotifyUserID])
+  .then((queryData) => 
+  {
+    // send queryData to prospects page so it can be rendered
+    res.render("pages/mixify", {
+      queryData,
+      // this is used so that the current user can't be added as a friend (you can't add yourself as a friend, duh!)
+      currentUserID: user.spotifyUserID,
+    });
+  })
+  .catch((err) => {
+    res.render('pages/mixify', {
+      displayNames: [],
+      error: true,
+      message: err.message,
+    });
+  });
 });
 
 app.get('/prospects', function(req, res) {
@@ -318,15 +335,16 @@ app.get('/callback', function(req, res) {
             // information about that particular song
             user.topTrackIDs.push(body.items[i].id);
           }
-          // body of request to detailed information about each song
-          var getTrackInfo = {
-            url: url,
-            headers: { 'Authorization': 'Bearer ' + user.spotifyAccessToken},
-            json: true 
-          }
+          
           // loop through user.topTrackIDs[] to get detailed information about every song
           for (var i = 0; i < user.topTrackIDs.length; i++) {
             var url = 'https://api.spotify.com/v1/tracks/' + user.topTrackIDs[i];
+            // body of request to detailed information about each song
+            var getTrackInfo = {
+              url: url,
+              headers: { 'Authorization': 'Bearer ' + user.spotifyAccessToken},
+              json: true 
+            }
             // making the request
             request.get(getTrackInfo, function(error, response, body) {
               // insert song information into the database

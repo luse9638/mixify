@@ -53,10 +53,10 @@
         <div id="current">
             <h1 id="currentHeader">Current Friends</h1>
             <div class="friends">
-                <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="profile picture" class="profile">
-                <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="profile picture" class="profile">
-                <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="profile picture" class="profile">
-                <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="profile picture" class="profile">
+                <% queryData[0].forEach(obj => { %>
+                    <img src=<%= obj.profilepicurl %> width="50", height="50">
+                    <%= obj.displayname%>
+                <% }) %>
             </div>
             <button class="btn btn-light">Mix!</button>
         </div>
