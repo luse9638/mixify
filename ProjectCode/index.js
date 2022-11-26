@@ -62,6 +62,7 @@ const user = {
   spotifyAccessToken: undefined,
   spotifyRefreshToken: undefined,
   spotifyProfilePicURL: undefined,
+  topTrackIDs: [],
 }
 
 app.get('/', function (req, res) {
@@ -169,6 +170,7 @@ app.get('/logout', function(req, res) {
     user.spotifyAccessToken = undefined;
     user.spotifyRefreshToken = undefined;
     user.spotifyProfilePicURL = undefined;
+    user.topTrackIDs = [];
     req.session.destroy();
     res.render("pages/logout");
 });
@@ -301,35 +303,48 @@ app.get('/callback', function(req, res) {
             res.redirect('/login');
           });
         });
-        // getting the user's top 50 tracks
-        var topTracks = [];
+        // body of request to get the user's top 50 tracks
         var getTopTracks = {
           // max limit from spotify is 50 tracks, long_term means top songs of all time
           url: 'https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=long_term',
           headers: { 'Authorization': 'Bearer ' + user.spotifyAccessToken},
           json: true 
         }
+        // actually making the request
         request.get(getTopTracks, function(error, response, body) {
           for (var i = 0; i < 50; i++) {
             // the get top track requests doesn't get all of the information we need about the song, specifically the artist
             // we instead store the track's unique id to use in a separate get request to spotify that will give more detailed
             // information about that particular song
-            topTracks.push(body.items[i].id);
+            user.topTrackIDs.push(body.items[i].id);
           }
-        });
-        // LEFT OFF HERE: spotify returns 400 status about 'invalid id' when making the get request below
-        for (var i = 0; i < 1; i++) {
-          console.log(String(topTracks[i]));
-          var url = 'https://api.spotify.com/v1/tracks/' + String(topTracks[i]);
+          // body of request to detailed information about each song
           var getTrackInfo = {
             url: url,
             headers: { 'Authorization': 'Bearer ' + user.spotifyAccessToken},
             json: true 
           }
-          request.get(getTrackInfo, function(error, response, body) {
-            console.log(body);
-          });
-        }
+          // loop through user.topTrackIDs[] to get detailed information about every song
+          for (var i = 0; i < user.topTrackIDs.length; i++) {
+            var url = 'https://api.spotify.com/v1/tracks/' + user.topTrackIDs[i];
+            // making the request
+            request.get(getTrackInfo, function(error, response, body) {
+              // insert song information into the database
+              db.any(`insert into usersToSongs (userID, songID, songName, artistName, albumName, albumArtURL) values
+              ($1, $2, $3, $4, $5, $6);`, 
+              [user.spotifyUserID, body.id, body.name, body.artists[0].name, body.album.name, body.album.images[0].url])
+              .then((data) => {
+                console.log("Successfully added songs to database")
+              })
+              .catch((err) => {
+                // should probably do something more here if this doesn't work, but that's a problem for testing week
+                console.log("An error occurred adding the songs to the database:");
+                console.log(err);
+                res.redirect('/login');
+              });
+            });
+          }
+        });
       // if we don't get a 200 status code, something's gone wrong
       } else {
         res.redirect('/#' +
