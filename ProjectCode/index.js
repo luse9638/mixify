@@ -62,6 +62,8 @@ const user = {
   spotifyAccessToken: undefined,
   spotifyRefreshToken: undefined,
   spotifyProfilePicURL: undefined,
+  songTableName: undefined,
+  topTrackIDs: [],
 }
 
 app.get('/', function (req, res) {
@@ -77,7 +79,24 @@ app.get('/home', function(req, res) {
 });
 
 app.get('/mixify', function(req, res) {
-    res.render("pages/mixify");
+  const query = `select * from users where userID in (select friendUserID from friends where userID = $1);`;
+  db.multi(query, [user.spotifyUserID])
+  .then((queryData) => 
+  {
+    // send queryData to prospects page so it can be rendered
+    res.render("pages/mixify", {
+      queryData,
+      // this is used so that the current user can't be added as a friend (you can't add yourself as a friend, duh!)
+      currentUserID: user.spotifyUserID,
+    });
+  })
+  .catch((err) => {
+    res.render('pages/mixify', {
+      displayNames: [],
+      error: true,
+      message: err.message,
+    });
+  });
 });
 
 app.get('/prospects', function(req, res) {
@@ -93,7 +112,6 @@ app.get('/prospects', function(req, res) {
   db.multi(query, [user.spotifyUserID])
   .then((queryData) => 
   {
-    console.log(queryData);
     // send queryData to prospects page so it can be rendered
     res.render("pages/prospects", {
       queryData,
@@ -110,8 +128,10 @@ app.get('/prospects', function(req, res) {
   });
 });
 
+// this gets called when the add friend button is clicked in prospects.ejs
 app.post("/prospects/add", (req, res) => {
   const friendUserID = req.body.friendUserID;
+  // insert current user's id and friend they want to add into the database
   const query = `insert into friends (userID, friendUserID) values ($1, $2);`;
   db.tx(async (t) => {
     await t.multi(
@@ -120,6 +140,7 @@ app.post("/prospects/add", (req, res) => {
     );
   })
     .then(() => {
+      // calls the /prospects endpoint so everything can be rerendered
       res.redirect('/prospects');
     })
     .catch((err) => {
@@ -130,9 +151,9 @@ app.post("/prospects/add", (req, res) => {
     });
 });
 
+// this gets called when the remove friend button is clicked in prospects.ejs
 app.post("/prospects/remove", (req, res) => {
-  console.log("Got here!");
-  const friendUserID = req.body.friendUserID;
+  // delete current user's specified friend to remove from the database
   const query = `delete from friends where userid=$1 and frienduserid=$2;`
   db.tx(async (t) => {
     await t.multi(
@@ -141,6 +162,7 @@ app.post("/prospects/remove", (req, res) => {
     );
   })
     .then(() => {
+      // call the /prospects endpoint so that everything can be rerendered
       res.redirect('/prospects');
     })
     .catch((err) => {
@@ -151,8 +173,6 @@ app.post("/prospects/remove", (req, res) => {
     });
 
 });
-
-
 
 app.get('/login', function(req, res) {
     res.render("pages/login");
@@ -168,6 +188,8 @@ app.get('/logout', function(req, res) {
     user.spotifyAccessToken = undefined;
     user.spotifyRefreshToken = undefined;
     user.spotifyProfilePicURL = undefined;
+    user.topTrackIDs = [];
+    songTableName = undefined;
     req.session.destroy();
     res.render("pages/logout");
 });
@@ -186,10 +208,10 @@ var scope = 'user-read-private user-read-email user-top-read';
 var stateKey = 'spotify_auth_state';
 
 /**
- * 
+ * Generates a random alphanumeric string of size length
  * @param {string} length the length of the string to generate
  * @returns generated string
- */
+*/
 var generateRandomString = function(length) {
   var text = '';
   var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -199,6 +221,15 @@ var generateRandomString = function(length) {
   }
 
   return text;
+}
+
+/**
+ * Creates a name for a user's table of songs based on the user's spotify id with format "Songs_userID"
+ * @param {string} userID user's spotify User ID
+ * @returns table name
+ */
+var getSongTableName = function(userID) {
+  return "Songs_" + userID;
 }
 
 // Spotify user authorization:
@@ -284,22 +315,70 @@ app.get('/callback', function(req, res) {
           user.spotifyUserID = body.id;
           user.spotifyDisplayName = body.display_name;
           user.spotifyProfilePicURL = body.images[0].url;
+          user.songTableName = getSongTableName(user.spotifyUserID);
           // save the user's session
           req.session.user = user;
           req.session.save();
-          // add username to database 
-          db.multi(`insert into users (userID, displayName, profilePicURL) values ($1, $2, $3);`, 
-          [user.spotifyUserID, user.spotifyDisplayName, user.spotifyProfilePicURL])
+          // add username to database if it isn't already in it and create table to hold the user's songs
+          // name of table that holds user's songs is found with getSongTableName()
+          db.multi(`insert into users (userID, displayName, profilePicURL) values ($1, $2, $3) on conflict do nothing;
+          create table if not exists "$4" (songID VARCHAR(100) PRIMARY KEY, songName VARCHAR(100), artistName VARCHAR(100),
+          albumName VARCHAR(100), albumArtURL VARCHAR(100));`, 
+          [user.spotifyUserID, user.spotifyDisplayName, user.spotifyProfilePicURL, user.songTableName])
           .then((data) => {
-            // redirect to home page if this is successful
-            res.redirect('/home');
+            console.log("Successfully added spotify user to database")
           })
           .catch((err) => {
             // should probably do something more here if this doesn't work, but that's a problem for testing week
+            console.log("An error occurred adding the spotify user to the database:");
             console.log(err);
+            res.redirect('/login');
           });
-
         });
+        // body of request to get the user's top 50 tracks
+        var getTopTracks = {
+          // max limit from spotify is 50 tracks, long_term means top songs of all time
+          url: 'https://api.spotify.com/v1/me/top/tracks?limit=50&time_range=long_term',
+          headers: { 'Authorization': 'Bearer ' + user.spotifyAccessToken},
+          json: true 
+        }
+        // actually making the request
+        request.get(getTopTracks, function(error, response, body) {
+          for (var i = 0; i < 50; i++) {
+            // the get top track requests doesn't get all of the information we need about the song, specifically the artist
+            // we instead store the track's unique id to use in a separate get request to spotify that will give more detailed
+            // information about that particular song
+            user.topTrackIDs.push(body.items[i].id);
+          }
+          
+          // loop through user.topTrackIDs[] to get detailed information about every song
+          for (var i = 0; i < user.topTrackIDs.length; i++) {
+            var url = 'https://api.spotify.com/v1/tracks/' + user.topTrackIDs[i];
+            // body of request to detailed information about each song
+            var getTrackInfo = {
+              url: url,
+              headers: { 'Authorization': 'Bearer ' + user.spotifyAccessToken},
+              json: true 
+            }
+            // making the request
+            request.get(getTrackInfo, function(error, response, body) {
+              // insert song information into user's song database
+              db.any(`insert into "$1" (songID, songName, artistName, albumName, albumArtURL) values
+              ($2, $3, $4, $5, $6);`, 
+              [user.songTableName, body.id, body.name, body.artists[0].name, body.album.name, body.album.images[0].url, ])
+              .then((data) => {
+                console.log("Successfully added songs to database")
+              })
+              .catch((err) => {
+                // should probably do something more here if this doesn't work, but that's a problem for testing week
+                console.log("An error occurred adding the songs to the database:");
+                console.log(err);
+                res.redirect('/login');
+              });
+            });
+          }
+        });
+      res.redirect('/home');
       // if we don't get a 200 status code, something's gone wrong
       } else {
         res.redirect('/#' +

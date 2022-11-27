@@ -15,7 +15,6 @@ CREATE TABLE friends(
     friendUserID VARCHAR(50)
 );
 
-
 CREATE TABLE lillian_songs(
     song VARCHAR(100),
     artist VARCHAR(50)
