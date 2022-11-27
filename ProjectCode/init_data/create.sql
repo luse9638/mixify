@@ -15,18 +15,6 @@ CREATE TABLE friends(
     friendUserID VARCHAR(50)
 );
 
-
--- this table links songs ids and their details to which users have them as a top song
-CREATE TABLE usersToSongs(
-    userID VARCHAR(50),
-    songID VARCHAR(50),
-    songName VARCHAR(100),
-    artistName VARCHAR(100),
-    albumName VARCHAR(100),
-    albumArtURL VARCHAR(100)
-);
-
-
 CREATE TABLE lillian_songs(
     song VARCHAR(100),
     artist VARCHAR(50)

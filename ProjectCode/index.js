@@ -62,6 +62,7 @@ const user = {
   spotifyAccessToken: undefined,
   spotifyRefreshToken: undefined,
   spotifyProfilePicURL: undefined,
+  songTableName: undefined,
   topTrackIDs: [],
 }
 
@@ -188,6 +189,7 @@ app.get('/logout', function(req, res) {
     user.spotifyRefreshToken = undefined;
     user.spotifyProfilePicURL = undefined;
     user.topTrackIDs = [];
+    songTableName = undefined;
     req.session.destroy();
     res.render("pages/logout");
 });
@@ -206,10 +208,10 @@ var scope = 'user-read-private user-read-email user-top-read';
 var stateKey = 'spotify_auth_state';
 
 /**
- * 
+ * Generates a random alphanumeric string of size length
  * @param {string} length the length of the string to generate
  * @returns generated string
- */
+*/
 var generateRandomString = function(length) {
   var text = '';
   var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -219,6 +221,15 @@ var generateRandomString = function(length) {
   }
 
   return text;
+}
+
+/**
+ * Creates a name for a user's table of songs based on the user's spotify id with format "Songs_userID"
+ * @param {string} userID user's spotify User ID
+ * @returns table name
+ */
+var getSongTableName = function(userID) {
+  return "Songs_" + userID;
 }
 
 // Spotify user authorization:
@@ -304,12 +315,16 @@ app.get('/callback', function(req, res) {
           user.spotifyUserID = body.id;
           user.spotifyDisplayName = body.display_name;
           user.spotifyProfilePicURL = body.images[0].url;
+          user.songTableName = getSongTableName(user.spotifyUserID);
           // save the user's session
           req.session.user = user;
           req.session.save();
-          // add username to database if it isn't already in it
-          db.multi(`insert into users (userID, displayName, profilePicURL) values ($1, $2, $3) on conflict do nothing;`, 
-          [user.spotifyUserID, user.spotifyDisplayName, user.spotifyProfilePicURL])
+          // add username to database if it isn't already in it and create table to hold the user's songs
+          // name of table that holds user's songs is found with getSongTableName()
+          db.multi(`insert into users (userID, displayName, profilePicURL) values ($1, $2, $3) on conflict do nothing;
+          create table if not exists "$4" (songID VARCHAR(100) PRIMARY KEY, songName VARCHAR(100), artistName VARCHAR(100),
+          albumName VARCHAR(100), albumArtURL VARCHAR(100));`, 
+          [user.spotifyUserID, user.spotifyDisplayName, user.spotifyProfilePicURL, user.songTableName])
           .then((data) => {
             console.log("Successfully added spotify user to database")
           })
@@ -347,10 +362,10 @@ app.get('/callback', function(req, res) {
             }
             // making the request
             request.get(getTrackInfo, function(error, response, body) {
-              // insert song information into the database
-              db.any(`insert into usersToSongs (userID, songID, songName, artistName, albumName, albumArtURL) values
-              ($1, $2, $3, $4, $5, $6);`, 
-              [user.spotifyUserID, body.id, body.name, body.artists[0].name, body.album.name, body.album.images[0].url])
+              // insert song information into user's song database
+              db.any(`insert into "$1" (songID, songName, artistName, albumName, albumArtURL) values
+              ($2, $3, $4, $5, $6);`, 
+              [user.songTableName, body.id, body.name, body.artists[0].name, body.album.name, body.album.images[0].url, ])
               .then((data) => {
                 console.log("Successfully added songs to database")
               })
@@ -363,6 +378,7 @@ app.get('/callback', function(req, res) {
             });
           }
         });
+      res.redirect('/home');
       // if we don't get a 200 status code, something's gone wrong
       } else {
         res.redirect('/#' +
