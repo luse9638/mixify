@@ -174,12 +174,12 @@ app.post("/prospects/remove", (req, res) => {
 
 });
 
-app.get('/login', function(req, res) {
-    res.render("pages/login");
+app.get('/registerSpotify', function(req, res) {
+    res.render("pages/registerSpotify");
 });
 
-app.get('/register', function(req, res) {
-    res.render("pages/register");
+app.get('/link', function(req, res) {
+    res.render("pages/link");
 });
 
 app.get('/logout', function(req, res) {
