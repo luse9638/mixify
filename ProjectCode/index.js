@@ -194,6 +194,10 @@ app.get('/logout', function(req, res) {
     res.render("pages/logout");
 });
 
+app.get('/results', function(req,res){
+  res.render("pages/results");
+});
+
 
 // using luke's spotify developer client_id and client_secret
 var client_id = 'a12be07bf1294c3cb32c3e290e15c117';
