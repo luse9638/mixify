@@ -63,6 +63,7 @@ const user = {
   spotifyRefreshToken: undefined,
   spotifyProfilePicURL: undefined,
   songTableName: undefined,
+  loggedIn: false,
   topTrackIDs: [],
 }
 
@@ -79,53 +80,68 @@ app.get('/home', function(req, res) {
 });
 
 app.get('/mixify', function(req, res) {
-  const query = `select * from users where userID in (select friendUserID from friends where userID = $1);`;
-  db.multi(query, [user.spotifyUserID])
-  .then((queryData) => 
-  {
-    // send queryData to prospects page so it can be rendered
-    res.render("pages/mixify", {
-      queryData,
-      // this is used so that the current user can't be added as a friend (you can't add yourself as a friend, duh!)
-      currentUserID: user.spotifyUserID,
+  // first make sure user is logged in
+  if (!user.loggedIn) {
+    res.redirect('/link');
+  }
+  else {
+    const query = `select * from users where userID in (select friendUserID from friends where userID = $1);`;
+    db.multi(query, [user.spotifyUserID])
+    .then((queryData) => 
+    {
+      // send queryData to prospects page so it can be rendered
+      res.render("pages/mixify", {
+        queryData,
+        // this is used so that the current user can't be added as a friend (you can't add yourself as a friend, duh!)
+        currentUserID: user.spotifyUserID,
+      });
+    })
+    .catch((err) => {
+      res.render('pages/mixify', {
+        displayNames: [],
+        error: true,
+        message: err.message,
+      });
     });
-  })
-  .catch((err) => {
-    res.render('pages/mixify', {
-      displayNames: [],
-      error: true,
-      message: err.message,
-    });
-  });
+  }
+  
+  
 });
 
 app.get('/prospects', function(req, res) {
-  // First query gets information about all users (EXCEPT those that are already added as friends): 
-  // id, display name, and profile pic, which is used for the prospective friends list
-  // this gets stored in queryData[0]
-  // there's probably a more concise way to write this query but for now it works fine
   
-  // Second query gets information of current user's friends from friends table, which is used in the current friends list
-  // this gets stored in queryData[1]
-  const query = `select * from users where userID in (select userID from users except select friendUserID from friends where friends.userID=$1);
-  select * from users where userID in (select friendUserID from friends where userID = $1);`;
-  db.multi(query, [user.spotifyUserID])
-  .then((queryData) => 
-  {
-    // send queryData to prospects page so it can be rendered
-    res.render("pages/prospects", {
-      queryData,
-      // this is used so that the current user can't be added as a friend (you can't add yourself as a friend, duh!)
-      currentUserID: user.spotifyUserID,
+  // first make sure user is logged in
+  if (!user.loggedIn) {
+    res.redirect('/link');
+  }
+  else {
+    // First query gets information about all users (EXCEPT those that are already added as friends): 
+    // id, display name, and profile pic, which is used for the prospective friends list
+    // this gets stored in queryData[0]
+    // there's probably a more concise way to write this query but for now it works fine
+    
+    // Second query gets information of current user's friends from friends table, which is used in the current friends list
+    // this gets stored in queryData[1]
+    const query = `select * from users where userID in (select userID from users except select friendUserID from friends where friends.userID=$1);
+    select * from users where userID in (select friendUserID from friends where userID = $1);`;
+    db.multi(query, [user.spotifyUserID])
+    .then((queryData) => 
+    {
+      // send queryData to prospects page so it can be rendered
+      res.render("pages/prospects", {
+        queryData,
+        // this is used so that the current user can't be added as a friend (you can't add yourself as a friend, duh!)
+        currentUserID: user.spotifyUserID,
+      });
+    })
+    .catch((err) => {
+      res.render('pages/prospects', {
+        displayNames: [],
+        error: true,
+        message: err.message,
+      });
     });
-  })
-  .catch((err) => {
-    res.render('pages/prospects', {
-      displayNames: [],
-      error: true,
-      message: err.message,
-    });
-  });
+  }
 });
 
 // this gets called when the add friend button is clicked in prospects.ejs
@@ -179,7 +195,10 @@ app.get('/registerSpotify', function(req, res) {
 });
 
 app.get('/link', function(req, res) {
-    res.render("pages/link");
+  // pass logged in status to display a message if user hasn't logged in yet
+  res.render("pages/link", {
+    loggedIn: user.loggedIn
+  });
 });
 
 app.get('/logout', function(req, res) {
@@ -190,6 +209,7 @@ app.get('/logout', function(req, res) {
     user.spotifyProfilePicURL = undefined;
     user.topTrackIDs = [];
     songTableName = undefined;
+    loggedIn = false;
     req.session.destroy();
     res.render("pages/logout");
 });
@@ -320,6 +340,7 @@ app.get('/callback', function(req, res) {
           user.spotifyDisplayName = body.display_name;
           user.spotifyProfilePicURL = body.images[0].url;
           user.songTableName = getSongTableName(user.spotifyUserID);
+          user.loggedIn = true;
           // save the user's session
           req.session.user = user;
           req.session.save();

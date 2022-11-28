@@ -53,6 +53,13 @@ a:active {
 <main>
   <body>
   <div class="content"><%- include ('../partials/message') %></div>
+  <!-- Displays if user tried to visit prospects.ejs or mixify.ejs before logging in -->
+  <% if (!loggedIn) { %>
+    <div>
+      <h4><center>You need to log in before you can add friends or mix with friends</center></h4>
+    </div>
+  <% } %>
+  
   <div class = "container"
       <form action="/register" method="POST">
         <h1><center>Create your Mixify Account</center></h1> 
