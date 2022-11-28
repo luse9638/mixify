@@ -371,7 +371,7 @@ app.get('/callback', function(req, res) {
           // add username to database if it isn't already in it and create table to hold the user's songs
           // name of table that holds user's songs is found with getSongTableName()
           db.multi(`insert into users (userID, displayName, profilePicURL) values ($1, $2, $3) on conflict do nothing;
-          DROP TABLE IF EXISTS "$4" create table "$4" (songID VARCHAR(100) PRIMARY KEY, songName VARCHAR(100), artistName VARCHAR(100),
+          DROP TABLE IF EXISTS "$4"; create table "$4" (songID VARCHAR(100) PRIMARY KEY, songName VARCHAR(100), artistName VARCHAR(100),
           albumName VARCHAR(100), albumArtURL VARCHAR(100));`, 
           [user.spotifyUserID, user.spotifyDisplayName, user.spotifyProfilePicURL, user.songTableName])
           .then((data) => {
