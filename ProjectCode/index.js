@@ -195,10 +195,17 @@ app.get('/registerSpotify', function(req, res) {
 });
 
 app.get('/link', function(req, res) {
-  // pass logged in status to display a message if user hasn't logged in yet
-  res.render("pages/link", {
-    loggedIn: user.loggedIn
-  });
+  // don't let user log in again if they're already logged in
+  if (user.loggedIn) {
+    res.redirect('/home');
+  }
+  else {
+    // pass logged in status to display a message if user hasn't logged in yet
+    res.render("pages/link", {
+     loggedIn: user.loggedIn
+    });
+  }
+  
 });
 
 app.get('/logout', function(req, res) {
