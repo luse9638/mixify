@@ -176,9 +176,51 @@ app.post("/prospects/remove", (req, res) => {
 
 
 // copied from the prospects friend request, need to fill in with mixify
-app.post("/mixify/mix", (req, res) => {
-  const friendUserID = req.body.friendUserID;
-  // insert current user's id and friend they want to add into the database
+app.post("/mixify/mix", async (req, res) => {
+  // var userID = user.spotifyUserID;
+
+  var userID = "friend1";
+
+
+
+  friendQuery = `SELECT friendUserID FROM friends WHERE userID = $1;`
+
+  // we have a table connecting users to their friends 
+  // they might only have a couple of friends ... so what should the request for mixify be? 
+  // not sure how to make the number of rows and not sure what joining query to make 
+  const query1 = await db.query(friendQuery, [userID])
+  console.log(query1)
+
+  var dict = {}
+
+
+  query1.forEach(async frind => {
+    const innerjoin = "SELECT * FROM friend1 INNER JOIN $1 ON $1.song = friend1.song GROUP BY friend1.song;"
+    const joinquery = await db.query(innerjoin, [friend.friendUserID])
+    
+    innerjoin.forEach(song => {
+        console.log(song)
+        dict[song.song] += 1
+      }
+    )
+
+    friend.friendUserID; 
+    count++;
+  });
+
+
+  
+  //[]
+  // dictionary and then if any of the songs has more than one occurence, display that 
+  // javascript dictionary with count: 
+  // key: song name, value: increase 
+  //[[{}, {}], [{}]]
+
+
+  query = `SELECT * FROM "$1" INNER JOIN ((question: how to get the friend user ID)) ON lillian_songs.song = justin_songs.song;` [userID]
+
+
+
   const query = `insert into friends (userID, friendUserID) values ($1, $2);`;
   db.tx(async (t) => {
     await t.multi(

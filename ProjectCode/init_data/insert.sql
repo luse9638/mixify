@@ -5,8 +5,9 @@ INSERT INTO users(userID, displayName, profilePicURL) VALUES
 
 
 INSERT INTO friends(userID, friendUserID) VALUES
-('j2kv8kg9gf92g21kld992hd', '82jfoei2f093hg934hdf93h'),
-('82jfoei2f093hg934hdf93h', '93hgk2hfiy29thf83hf93jd');
+('friend1', 'friend2'),
+('friend1', 'friend3'),
+('friend3', 'friend1');
 
 INSERT INTO lillian_songs(song, artist) VALUES
 ('Butterfly Effect', 'Travvy Scott'),
@@ -17,3 +18,19 @@ INSERT INTO justin_songs(song, artist) VALUES
 ('Instant Crush', 'Daft Punk'),
 ('Butterfly Effect', 'Travvy Scott'),
 ('Equinox', 'Hotel Pools');
+
+
+
+INSERT INTO friend1 (song) VALUES( 
+('Equinox')
+);
+
+INSERT INTO friend2 (song)VALUES ( 
+('Equinox')
+);
+
+INSERT INTO friend3 (song)VALUES ( 
+('Equinox')
+);
+
+-- use o-auth

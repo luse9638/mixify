@@ -20,6 +20,19 @@ CREATE TABLE lillian_songs(
     artist VARCHAR(50)
 );
 
+CREATE TABLE friend1 ( 
+song VARCHAR(100)
+);
+
+CREATE TABLE friend2 ( 
+song VARCHAR(100)
+);
+
+CREATE TABLE friend3 ( 
+song VARCHAR(100)
+);
+
+
 
 CREATE TABLE justin_songs(
     song VARCHAR(100),
