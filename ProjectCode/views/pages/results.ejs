@@ -1,0 +1,55 @@
+<%- include ('../partials/header') %>
+<%- include ('../partials/menu') %>
+<style>
+    main {
+        text-align: center;
+    }
+
+    h1 {
+        margin-top: 56px;
+        margin-bottom: 28px;
+    }
+
+    #songsContainer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 16px;
+    }
+
+    .song {
+        background: rgba(164, 230, 169, 0.846);
+        width: 30%;
+        height: 150px;
+        border-radius: 12px;
+    }
+
+</style>
+
+<main>
+    <h1>Here's what songs you have in common</h1>
+    <div id="songsContainer">
+        <div class="song">
+            <img src="" alt="" class="songImage">
+            <p class="songName"></p>
+        </div>
+        <div class="song">
+            <img src="" alt="" class="songImage">
+            <p class="songName"></p>
+        </div>
+        <div class="song">
+            <img src="" alt="" class="songImage">
+            <p class="songName"></p>
+        </div>
+        <div class="song">
+            <img src="" alt="" class="songImage">
+            <p class="songName"></p>
+        </div>
+        <div class="song">
+            <img src="" alt="" class="songImage">
+            <p class="songName"></p>
+        </div>
+    </div>
+</main>
+
+<%- include ('../partials/footer') %>
