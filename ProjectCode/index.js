@@ -171,8 +171,34 @@ app.post("/prospects/remove", (req, res) => {
         message: err.message,
       });
     });
-
 });
+
+
+
+// copied from the prospects friend request, need to fill in with mixify
+app.post("/mixify/mix", (req, res) => {
+  const friendUserID = req.body.friendUserID;
+  // insert current user's id and friend they want to add into the database
+  const query = `insert into friends (userID, friendUserID) values ($1, $2);`;
+  db.tx(async (t) => {
+    await t.multi(
+      query,
+      [user.spotifyUserID, req.body.friendUserID] 
+    );
+  })
+    .then(() => {
+      // calls the /prospects endpoint so everything can be rerendered
+      res.redirect('/prospects');
+    })
+    .catch((err) => {
+      res.redirect('/prospects', {
+        error: true,
+        message: err.message,
+      });
+    });
+});
+
+
 
 app.get('/login', function(req, res) {
     res.render("pages/login");

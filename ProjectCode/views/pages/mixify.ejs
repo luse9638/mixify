@@ -47,9 +47,7 @@
     
 <main>
     <div id="mainContent">
-        <h1>Add Some Friends!</h1>
-        <input type="text" id="inputBox">
-        <button class="btn btn-success">Add</button>
+        <h1>Add Friends on the Prospects Page!</h1>
         <div id="current">
             <h1 id="currentHeader">Current Friends</h1>
             <div class="friends">
@@ -58,8 +56,12 @@
                     <%= obj.displayname%>
                 <% }) %>
             </div>
-            <button class="btn btn-light">Mix!</button>
-        </div>
+            <!-- need to change this to make it mixifiy functional... dunno which object id to use -->
+            <form action='http://localhost:3000/mixify/mix' method='POST'> 
+                <!-- Pass the current userid to friendUserID in index.js -->
+                <input name='friendUserID' type='hidden' value='<%= obj.userid %>'> </input>
+                <button type='submit' class='btn btn-primary'>Remove Friend</button>
+              </form       
     </div>
 </main>
 
