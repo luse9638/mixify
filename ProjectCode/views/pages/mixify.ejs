@@ -55,12 +55,11 @@
                     <img src=<%= obj.profilepicurl %> width="50", height="50">
                     <%= obj.displayname%>
                 <% }) %>
-            </div>
-            <!-- need to change this to make it mixifiy functional... dunno which object id to use -->
+            </div>  
             <form action='http://localhost:3000/mixify/mix' method='POST'> 
-                <!-- Pass the current userid to friendUserID in index.js -->
                 <button type='submit' class='btn btn-primary'>Mixify</button>
-              </form       
+            </form>      
+        </div>
     </div>
 </main>
 

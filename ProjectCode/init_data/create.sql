@@ -15,26 +15,58 @@ CREATE TABLE friends(
     friendUserID VARCHAR(50)
 );
 
-CREATE TABLE lillian_songs(
-    song VARCHAR(100),
-    artist VARCHAR(50)
+-- format for song tables for each user
+-- CREATE TABLE Songs_userID(
+--     songID VARCHAR(100) PRIMARY KEY,
+--     songName VARCHAR(100),
+--     artistName VARCHAR(100),
+--     albumName VARCHAR(100),
+--     albumArtURL VARCHAR(100)
+-- );
+
+
+-- DUMMY DATA BELOW
+
+-- Lillian's song table
+CREATE TABLE Songs_lillianUserID(
+    songID VARCHAR(100) PRIMARY KEY,
+    songName VARCHAR(100),
+    artistName VARCHAR(100),
+    albumName VARCHAR(100),
+    albumArtURL VARCHAR(100)
 );
 
-CREATE TABLE friend1 ( 
-song VARCHAR(100)
+-- Vikki's song table
+CREATE TABLE Songs_vikkiUserID(
+    songID VARCHAR(100) PRIMARY KEY,
+    songName VARCHAR(100),
+    artistName VARCHAR(100),
+    albumName VARCHAR(100),
+    albumArtURL VARCHAR(100)
 );
 
-CREATE TABLE friend2 ( 
-song VARCHAR(100)
+-- Justin's song table
+CREATE TABLE Songs_justinUserID(
+    songID VARCHAR(100) PRIMARY KEY,
+    songName VARCHAR(100),
+    artistName VARCHAR(100),
+    albumName VARCHAR(100),
+    albumArtURL VARCHAR(100)
 );
 
-CREATE TABLE friend3 ( 
-song VARCHAR(100)
+-- luk's song table
+CREATE TABLE Songs_lukUserID(
+    songID VARCHAR(100) PRIMARY KEY,
+    songName VARCHAR(100),
+    artistName VARCHAR(100),
+    albumName VARCHAR(100),
+    albumArtURL VARCHAR(100)
 );
-
-
-
-CREATE TABLE justin_songs(
-    song VARCHAR(100),
-    artist VARCHAR(50)
+-- Freddy's song table
+CREATE TABLE Songs_freddyUserID(
+    songID VARCHAR(100) PRIMARY KEY,
+    songName VARCHAR(100),
+    artistName VARCHAR(100),
+    albumName VARCHAR(100),
+    albumArtURL VARCHAR(100)
 );
