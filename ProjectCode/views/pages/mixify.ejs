@@ -47,9 +47,7 @@
     
 <main>
     <div id="mainContent">
-        <h1>Add Some Friends!</h1>
-        <input type="text" id="inputBox">
-        <button class="btn btn-success">Add</button>
+        <h1>Add Friends on the Prospects Page!</h1>
         <div id="current">
             <h1 id="currentHeader">Current Friends</h1>
             <div class="friends">
@@ -57,7 +55,7 @@
                     <img src=<%= obj.profilepicurl %> width="50", height="50">
                     <%= obj.displayname%>
                 <% }) %>
-            </div>
+            </div>  
             <form action='http://localhost:3000/mixify/mix' method='POST'> 
                 <button type='submit' class='btn btn-primary'>Mixify</button>
             </form>      

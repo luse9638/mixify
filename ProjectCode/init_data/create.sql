@@ -24,6 +24,7 @@ CREATE TABLE friends(
 --     albumArtURL VARCHAR(100)
 -- );
 
+
 -- DUMMY DATA BELOW
 
 -- Lillian's song table
@@ -61,7 +62,6 @@ CREATE TABLE Songs_lukUserID(
     albumName VARCHAR(100),
     albumArtURL VARCHAR(100)
 );
-
 -- Freddy's song table
 CREATE TABLE Songs_freddyUserID(
     songID VARCHAR(100) PRIMARY KEY,

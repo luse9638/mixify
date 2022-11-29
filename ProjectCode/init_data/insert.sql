@@ -49,5 +49,3 @@ INSERT INTO Songs_freddyUserID(songID, songName, artistName, albumName, albumArt
 ('0ciHz919LVKoH4zgxyMPZ9', 'I Knew You Were Trouble', 'Taylor Swift', 'Red (Deluxe Edition)', 'https://i.scdn.co/image/ab67616d00001e02a7613d346501b828b56a0bc3');
 
 
-
-
