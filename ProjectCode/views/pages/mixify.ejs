@@ -58,7 +58,9 @@
                     <%= obj.displayname%>
                 <% }) %>
             </div>
-            <button class="btn btn-light">Mix!</button>
+            <form action='http://localhost:3000/mixify/mix' method='POST'> 
+                <button type='submit' class='btn btn-primary'>Mixify</button>
+            </form>      
         </div>
     </div>
 </main>
