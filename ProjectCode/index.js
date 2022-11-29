@@ -215,8 +215,8 @@ app.get('/logout', function(req, res) {
     user.spotifyRefreshToken = undefined;
     user.spotifyProfilePicURL = undefined;
     user.topTrackIDs = [];
-    songTableName = undefined;
-    loggedIn = false;
+    user.songTableName = undefined;
+    user.loggedIn = false;
     req.session.destroy();
     res.render("pages/logout");
 });
@@ -345,8 +345,16 @@ app.get('/callback', function(req, res) {
           // save user id and display name for database and webpages
           user.spotifyUserID = body.id;
           user.spotifyDisplayName = body.display_name;
-          user.spotifyProfilePicURL = body.images[0].url;
+          // if user doesn't have a set profile pic use a default one
+          if (body.images.length == 0) {
+            user.spotifyProfilePicURL = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png";
+          }
+          else {
+            user.spotifyProfilePicURL = body.images[0].url;
+          }
+          // define a table name to hold the user's songs
           user.songTableName = getSongTableName(user.spotifyUserID);
+          // user is now logged in!
           user.loggedIn = true;
           // save the user's session
           req.session.user = user;
@@ -376,7 +384,7 @@ app.get('/callback', function(req, res) {
         }
         // actually making the request
         request.get(getTopTracks, function(error, response, body) {
-          for (var i = 0; i < 50; i++) {
+          for (var i = 0; i < body.items.length; i++) {
             // the get top track requests doesn't get all of the information we need about the song, specifically the artist
             // we instead store the track's unique id to use in a separate get request to spotify that will give more detailed
             // information about that particular song
@@ -399,7 +407,7 @@ app.get('/callback', function(req, res) {
               ($2, $3, $4, $5, $6);`, 
               [user.songTableName, body.id, body.name, body.artists[0].name, body.album.name, body.album.images[0].url, ])
               .then((data) => {
-                console.log("Successfully added songs to database")
+                console.log("Successfully added song to database")
               })
               .catch((err) => {
                 // should probably do something more here if this doesn't work, but that's a problem for testing week
