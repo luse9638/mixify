@@ -475,16 +475,21 @@ app.post("/mixify/mix", async (req, res) => {
     // can add GROUP BY friend1.song if needed 
     const joinquery = await db.query(innerjoin, [songTableName, friendSongTableName]);
     
-    joinquery.forEach(song => {
-        console.log(song)
-        dict[song.song] += 1
-      }
-    )
+    res.render('pages/results', {
+      songData: joinquery
+    });
+    
+    
+    // joinquery.forEach(song => {
+    //     console.log(song)
+    //     dict[song.song] += 1
+    //   }
+    // )
 
   })
   // .then(() => {
     //console.log(dict);
-    res.redirect('/results');
+    //res.redirect('/results');
   // })
   // .catch((err) => {
   //   res.redirect('/prospects', {
