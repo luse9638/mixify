@@ -27,7 +27,7 @@ CREATE TABLE friends(
 -- DUMMY DATA BELOW
 
 -- Lillian's song table
-CREATE TABLE Songs_lillianUserID(
+CREATE TABLE "'songs_lillianUserID'"(
     songID VARCHAR(100) PRIMARY KEY,
     songName VARCHAR(100),
     artistName VARCHAR(100),
@@ -36,7 +36,7 @@ CREATE TABLE Songs_lillianUserID(
 );
 
 -- Vikki's song table
-CREATE TABLE Songs_vikkiUserID(
+CREATE TABLE "'songs_vikkiUserID'"(
     songID VARCHAR(100) PRIMARY KEY,
     songName VARCHAR(100),
     artistName VARCHAR(100),
@@ -45,7 +45,7 @@ CREATE TABLE Songs_vikkiUserID(
 );
 
 -- Justin's song table
-CREATE TABLE Songs_justinUserID(
+CREATE TABLE "'songs_justinUserID'"(
     songID VARCHAR(100) PRIMARY KEY,
     songName VARCHAR(100),
     artistName VARCHAR(100),
@@ -54,7 +54,7 @@ CREATE TABLE Songs_justinUserID(
 );
 
 -- luk's song table
-CREATE TABLE Songs_lukUserID(
+CREATE TABLE "'songs_lukUserID'"(
     songID VARCHAR(100) PRIMARY KEY,
     songName VARCHAR(100),
     artistName VARCHAR(100),
@@ -63,7 +63,7 @@ CREATE TABLE Songs_lukUserID(
 );
 
 -- Freddy's song table
-CREATE TABLE Songs_freddyUserID(
+CREATE TABLE "'songs_freddyUserID'"(
     songID VARCHAR(100) PRIMARY KEY,
     songName VARCHAR(100),
     artistName VARCHAR(100),

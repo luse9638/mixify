@@ -260,7 +260,7 @@ var generateRandomString = function(length) {
  * @returns table name
  */
 var getSongTableName = function(userID) {
-  return "Songs_" + userID;
+  return "songs_" + userID;
 }
 
 // Spotify user authorization:
@@ -467,24 +467,23 @@ app.post("/mixify/mix", async (req, res) => {
 
   var dict = {}
 
-  console.log(query1);
 
   query1.forEach(async friend => {
     friendString = friend.frienduserid;
     var friendSongTableName = getSongTableName(friendString);
-    const innerjoin = "SELECT * FROM $1 INNER JOIN $2 ON $1.song = $2.song;"
+    const innerjoin = `SELECT * FROM "$1" INNER JOIN "$2" ON "$1".songID = "$2".songID;`
     // can add GROUP BY friend1.song if needed 
     const joinquery = await db.query(innerjoin, [songTableName, friendSongTableName]);
     
     joinquery.forEach(song => {
-        // console.log(song)
+        console.log(song)
         dict[song.song] += 1
       }
     )
 
   })
   // .then(() => {
-    console.log(dict);
+    //console.log(dict);
     res.redirect('/results');
   // })
   // .catch((err) => {
