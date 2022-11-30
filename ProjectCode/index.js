@@ -455,6 +455,50 @@ app.post("/songs", (req, res) => {
 // 2. here from the displaying friends correctly select friends and update the database adequately - refer to lab 9
 
 
+app.post("/mixify/mix", async (req, res) => {
+  // var userID = user.spotifyUserID;
+
+  var songTableName = getSongTableName(user.spotifyUserID);
+
+  friendQuery = `SELECT friendUserID FROM friends WHERE userID = $1;`;
+
+  const query1 = await db.query(friendQuery, [user.spotifyUserID])
+  // console.log(query1)
+
+  var dict = {}
+
+  query1.forEach(async friend => {
+    var friendSongTableName = getSongTableName(friend.friendUserID);
+    const innerjoin = "SELECT * FROM $1 INNER JOIN $2 ON $1.song = $2.song;"
+    // can add GROUP BY friend1.song if needed 
+    const joinquery = await db.query(innerjoin, [songTableName, friendSongTableName]);
+    
+    joinquery.forEach(song => {
+        // console.log(song)
+        dict[song.song] += 1
+      }
+    )
+  })
+  // .then(() => {
+    console.log(dict);
+    res.redirect('/results');
+  // })
+  // .catch((err) => {
+  //   res.redirect('/prospects', {
+  //     error: true,
+  //     message: err.message,
+  //   });
+  // });
+  ;
+
+
+  //[]
+  // dictionary and then if any of the songs has more than one occurence, display that 
+  // javascript dictionary with count: 
+  // key: song name, value: increase 
+  //[[{}, {}], [{}]]
+});
+
 
 
 
