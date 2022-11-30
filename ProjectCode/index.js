@@ -467,8 +467,11 @@ app.post("/mixify/mix", async (req, res) => {
 
   var dict = {}
 
+  console.log(query1);
+
   query1.forEach(async friend => {
-    var friendSongTableName = getSongTableName(friend.friendUserID);
+    friendString = friend.frienduserid;
+    var friendSongTableName = getSongTableName(friendString);
     const innerjoin = "SELECT * FROM $1 INNER JOIN $2 ON $1.song = $2.song;"
     // can add GROUP BY friend1.song if needed 
     const joinquery = await db.query(innerjoin, [songTableName, friendSongTableName]);
@@ -478,6 +481,7 @@ app.post("/mixify/mix", async (req, res) => {
         dict[song.song] += 1
       }
     )
+
   })
   // .then(() => {
     console.log(dict);
