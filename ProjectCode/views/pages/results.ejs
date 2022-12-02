@@ -24,40 +24,22 @@
         border-radius: 12px;
     }
 
+    p {
+        font-family: Arial, Helvetica, sans-serif;
+        font-weight: bold;
+    }
+
 </style>
 
 <main>
-    <h1>Here's what songs you have in common</h1>
-    <div>
+    <h1>Here's what songs you have in common...</h1>
+    <div style ="margin-left: 29%;">
         <% songData.forEach(song => { %>
-            <p1>SONG NAME: <%= song.songname %></p1>
-            <p1>ARTIST: <%= song.artistname %></p1>
-            <p1>ALBUM: <%= song.albumname %></p1>
+            <div style="background: #1DB954; padding-top: 13px; margin-top: 20px; margin-bottom: 20px; width: 60%; height: 180px; border-radius: 50px;">
+            <p><%= song.songname.toUpperCase(); %> by <%= song.artistname %> from <%= song.albumname %></p>
             <img src=<%= song.albumarturl %> width="100", height="100">
-            <br>
+            </div>
         <% }) %>
-    </div>
-    <div id="songsContainer">
-        <div class="song">
-            <img src="" alt="" class="songImage">
-            <p class="songName"></p>
-        </div>
-        <div class="song">
-            <img src="" alt="" class="songImage">
-            <p class="songName"></p>
-        </div>
-        <div class="song">
-            <img src="" alt="" class="songImage">
-            <p class="songName"></p>
-        </div>
-        <div class="song">
-            <img src="" alt="" class="songImage">
-            <p class="songName"></p>
-        </div>
-        <div class="song">
-            <img src="" alt="" class="songImage">
-            <p class="songName"></p>
-        </div>
     </div>
 </main>
 
