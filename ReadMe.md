@@ -7,6 +7,8 @@ Justin Jamrowski (juja4571, juja4571@colorado.edu),
 Freddy Linn (frli5468, frli5468@colorado.edu)
 Lillian Duarte (lidu5648, lidu5648@colorado.edu)
 
+Link to video of application: https://drive.google.com/file/d/1GeNOdw63iDWNRRGml6HTD-tKNMeRwyoX/view?usp=sharing
+
 Tech Stack Used:
 
 Prerequisites to run application:
