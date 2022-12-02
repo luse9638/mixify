@@ -20,7 +20,7 @@
     .song {
         background: rgba(164, 230, 169, 0.846);
         width: 30%;
-        height: 150px;
+        height: px;
         border-radius: 12px;
     }
 
@@ -28,17 +28,29 @@
 
 <main>
     <h1>Here's what songs you have in common</h1>
-    <div>
-        <% songData.forEach(song => { %>
-            <p1>SONG NAME: <%= song.songname %></p1>
-            <p1>ARTIST: <%= song.artistname %></p1>
-            <p1>ALBUM: <%= song.albumname %></p1>
-            <img src=<%= song.albumarturl %> width="100", height="100">
-            <br>
-        <% }) %>
-    </div>
+    
+    
+
     <div id="songsContainer">
-        <div class="song">
+        <% if (songData.length === 0) { %>
+            No songs in common :/
+        <% } else { %>
+            <% songData.forEach(song => { %>
+                <div class="song">
+                    <img src=<%= song.albumarturl %> width="100", height="100", class="songImage", style="margin: 10px 10px 10px 10px">
+                    <p class="songName"><%= song.songname %></p>
+                    <p>Artist: <%= song.artistname %></p>
+                    <p>Off the album: <%= song.albumname %></p>
+                </div>
+            <% }) %>
+        <% } %>
+        
+        
+        
+        
+        
+        
+        <!-- <div class="song">
             <img src="" alt="" class="songImage">
             <p class="songName"></p>
         </div>
@@ -57,7 +69,7 @@
         <div class="song">
             <img src="" alt="" class="songImage">
             <p class="songName"></p>
-        </div>
+        </div> -->
     </div>
 </main>
 

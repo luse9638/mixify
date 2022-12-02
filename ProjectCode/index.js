@@ -474,6 +474,7 @@ app.post("/mixify/mix", async (req, res) => {
     const innerjoin = `SELECT * FROM "$1" INNER JOIN "$2" ON "$1".songID = "$2".songID;`
     // can add GROUP BY friend1.song if needed 
     const joinquery = await db.query(innerjoin, [songTableName, friendSongTableName]);
+    console.log(joinquery);
     
     res.render('pages/results', {
       songData: joinquery
